@@ -1,1 +1,3 @@
 requests
+tinker
+python-dotenv
