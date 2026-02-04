@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class TinkerLLM:
-    def __init__(self, model: str = "Qwen/Qwen3-8B"):
+    def __init__(self, model: str = "meta-llama/Llama-3.1-8B-Instruct"):
         """
         Initialize the Tinker LLM client with a given model. Default model is "Qwen/Qwen3-8B".
         """
@@ -23,7 +23,8 @@ class TinkerLLM:
         self.tokenizer = self.sampling_client.get_tokenizer()
         print("Tinker SamplingClient initialized.")
 
-    def chat(self, messages: list[dict], max_tokens: int = 1024, temperature: float = 0.7) -> str:
+    def chat(self, messages: list[dict], max_tokens: int = 1024, temperature: float = 0.7, 
+             stop_sequences: list[str] = None) -> str:
         """
         Generate a chat completion.
 
@@ -31,6 +32,7 @@ class TinkerLLM:
             messages (list[dict]): List of message dicts with 'role' and 'content'.
             max_tokens (int): Maximum tokens to generate.
             temperature (float): Sampling temperature.
+            stop_sequences (list[str]): List of stop sequences to halt generation.
 
         Returns:
             str: The generated assistant message content.
@@ -49,12 +51,27 @@ class TinkerLLM:
         tokens = self.tokenizer.encode(text_input)
         prompt = types.ModelInput.from_ints(tokens)
         
-        # Set up sampling parameters
-        params = types.SamplingParams(
-            max_tokens=max_tokens,
-            temperature=temperature,
-            # Can add stop conditions if needed (basedo n docs)
-        )
+        # Encode stop sequences to token IDs if provided
+        stop_token_ids = None
+        if stop_sequences:
+            stop_token_ids = []
+            for stop_seq in stop_sequences:
+                stop_tokens = self.tokenizer.encode(stop_seq, add_special_tokens=False)
+                if stop_tokens:
+                    stop_token_ids.extend(stop_tokens)
+            # Remove duplicates while preserving order
+            if stop_token_ids:
+                stop_token_ids = list(dict.fromkeys(stop_token_ids))
+        
+        # Set up sampling parameters (must pass stop_token_ids in constructor since it's frozen)
+        params_kwargs = {
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+        }
+        if stop_token_ids:
+            params_kwargs["stop_token_ids"] = stop_token_ids
+        
+        params = types.SamplingParams(**params_kwargs)
         
         # num_samples=1 for standard chat
         future = self.sampling_client.sample(
