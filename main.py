@@ -80,7 +80,16 @@ def choose_next_link(llm: TinkerLLM, current_page: str, target_page: str, links:
     
     # Limit links shown to LLM to avoid context overflow 
     # TODO UPDATE THIS IN THE FUTURE TO SHOW ALL THE LINKS ***********************************************!!!!!!!!!
-    display_links = available_links[:200]
+    # score the links based on word overlap with the target page
+    target_words = set(re.findall(r"[A-Za-z]+", target_page.lower()))
+
+    def score(link):
+        link_words = set(re.findall(r"[A-Za-z]+", link.lower()))
+        return len(link_words & target_words)
+    
+    ranked_links = sorted(available_links, key=score, reverse=True)
+
+    display_links = ranked_links[:200]
     links_text = "\n".join(display_links)
     
     # Prompt from the paper
