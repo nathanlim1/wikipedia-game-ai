@@ -1,117 +1,196 @@
+import re
+import time
+from typing import Any, Dict, Optional, Set, Tuple, List
+from urllib.parse import unquote
+
 import requests
-from typing import Set, Dict, Any, Optional
+from bs4 import BeautifulSoup
 
 
 class WikipediaClient:
-    def __init__(self, api_url: str = "https://en.wikipedia.org/w/api.php",
-                 user_agent: str = "CalPolySLO CSC581 Wikipedia Game AI (nlim10@calpoly.edu)",
-                 timeout: int = 10):
+    def __init__(
+        self,
+        api_url: str = "https://en.wikipedia.org/w/api.php",
+        user_agent: str = "CalPolySLO CSC581 Wikipedia Game AI (nlim10@calpoly.edu)",
+        timeout: int = 25,
+        retries: int = 2,
+    ):
         self.api_url = api_url
         self.user_agent = user_agent
         self.timeout = timeout
-    
-    def get_links_from_page(self, page_title: str) -> Set[str]:
-        """
-        Get all links from a Wikipedia page, returning a set of all page titles that are linked.
-        """
-        # Check if the page exists and normalize the title
-        normalized_title = self._get_normalized_title(page_title)
-        if not normalized_title:
-            raise ValueError(f"Page '{page_title}' does not exist")
-        
-        # Fetch all links from the page
-        links = set()
-        continue_token = None
-        
-        while True:
-            # Batch the fetching of links
-            batch_links, continue_token = self._fetch_links_batch(normalized_title, continue_token)
-            links.update(batch_links)
-            
-            if continue_token is None:
-                break
-        
-        return links
-    
+        self.retries = retries
+        self.http = requests.Session()
+
     def page_exists(self, page_title: str) -> bool:
-        """
-        Check if a Wikipedia page exists, returning True if it does, False otherwise.
-        """
         try:
             return self._get_normalized_title(page_title) is not None
         except requests.RequestException:
             return False
-    
-    def _get_normalized_title(self, page_title: str) -> Optional[str]:
-        """
-        Verifies if a page exists, then returns the normalized title of that page.
-        """
-        params = {
-            "action": "query",
-            "format": "json",
-            "titles": page_title,
-            "redirects": 1
-        }
-        
+
+    def resolve_title_exact(self, title: str) -> str:
+        title = title.strip()
+        if not title:
+            raise ValueError("Empty title")
+
+        data = self._wiki_get({"action": "query", "format": "json", "redirects": 1, "titles": title})
+        pages = data.get("query", {}).get("pages", {})
+        page = next(iter(pages.values()), {})
+        if page.get("missing") is None and page.get("title"):
+            return page["title"]
+        raise ValueError(f"Wikipedia page not found (exact): {title}")
+
+    def resolve_title_fuzzy_start(self, title: str) -> str:
+        title = title.strip()
+        if not title:
+            raise ValueError("Empty title")
         try:
-            response = self._make_api_request(params)
-            pages = response.get("query", {}).get("pages", {})
-            
-            for page_id, page_data in pages.items():
-                if int(page_id) > 0:  # Missing pages have negative page IDs
-                    return page_data.get("title")
-            
-            return None
-        except requests.RequestException as e:
-            raise requests.RequestException(f"Error verifying page existence: {e}")
-    
+            return self.resolve_title_exact(title)
+        except Exception:
+            pass
+
+        opensearch_data = self._wiki_get(
+            {"action": "opensearch", "format": "json", "search": title, "limit": 1, "namespace": 0}
+        )
+        if isinstance(opensearch_data, list) and len(opensearch_data) >= 2 and opensearch_data[1]:
+            return self.resolve_title_exact(opensearch_data[1][0])
+        raise ValueError(f"Wikipedia page not found: {title}")
+
+    def get_extract(self, title: str, max_chars: int = 650) -> str:
+        data = self._wiki_get(
+            {
+                "action": "query",
+                "format": "json",
+                "prop": "extracts",
+                "explaintext": 1,
+                "exintro": 1,
+                "redirects": 1,
+                "titles": title,
+            }
+        )
+        pages = data.get("query", {}).get("pages", {})
+        page = next(iter(pages.values()), {})
+        extract = (page.get("extract") or "").strip()
+        extract = re.sub(r"\s+", " ", extract)
+        return extract[:max_chars]
+
+    def get_visible_outgoing_links(self, title: str, max_total: int = 6000) -> Tuple[List[str], Dict[str, str]]:
+        data = self._wiki_get({"action": "parse", "format": "json", "page": title, "prop": "text", "redirects": 1})
+        if "error" in data:
+            raise ValueError(f"Wikipedia parse error for '{title}': {data['error']}")
+
+        html = data["parse"]["text"]["*"]
+        soup = BeautifulSoup(html, "lxml")
+        root = soup.find("div", class_="mw-parser-output") or soup
+
+        for selector in [
+            "div.navbox",
+            "div.vertical-navbox",
+            "table.navbox",
+            "div.reflist",
+            "ol.references",
+            "div.mw-references-wrap",
+            "div.catlinks",
+            "div.toc",
+            "span.mw-editsection",
+            "sup.reference",
+        ]:
+            for node in root.select(selector):
+                node.decompose()
+
+        titles: List[str] = []
+        seen = set()
+        title_to_anchor: Dict[str, str] = {}
+
+        for link in root.find_all("a", href=True):
+            href = link["href"]
+            if not href.startswith("/wiki/"):
+                continue
+
+            classes = link.get("class") or []
+            if "new" in classes:
+                continue
+
+            slug = href.split("/wiki/", 1)[1].split("#", 1)[0]
+            if not slug:
+                continue
+
+            if ":" in slug:
+                continue
+
+            destination_title = link.get("title")
+            if not destination_title:
+                destination_title = unquote(slug).replace("_", " ")
+            destination_title = destination_title.strip()
+            if not destination_title or destination_title == "Main Page":
+                continue
+
+            anchor_text = link.get_text(" ", strip=True)
+            if not anchor_text:
+                anchor_text = destination_title
+
+            if destination_title not in seen:
+                seen.add(destination_title)
+                titles.append(destination_title)
+                title_to_anchor[destination_title] = anchor_text
+
+            if len(titles) >= max_total:
+                break
+
+        return titles, title_to_anchor
+
+    def get_links_from_page(self, page_title: str) -> Set[str]:
+        normalized_title = self._get_normalized_title(page_title)
+        if not normalized_title:
+            raise ValueError(f"Page '{page_title}' does not exist")
+
+        links = set()
+        continue_token = None
+        while True:
+            batch_links, continue_token = self._fetch_links_batch(normalized_title, continue_token)
+            links.update(batch_links)
+            if continue_token is None:
+                break
+        return links
+
+    def _wiki_get(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        headers = {"User-Agent": self.user_agent}
+        last_err = None
+        for attempt in range(self.retries + 1):
+            try:
+                response = self.http.get(self.api_url, params=params, headers=headers, timeout=self.timeout)
+                response.raise_for_status()
+                return response.json()
+            except Exception as exc:
+                last_err = exc
+                time.sleep(0.45 * (attempt + 1))
+        raise last_err  # type: ignore[misc]
+
+    def _get_normalized_title(self, page_title: str) -> Optional[str]:
+        params = {"action": "query", "format": "json", "titles": page_title, "redirects": 1}
+        response = self._wiki_get(params)
+        pages = response.get("query", {}).get("pages", {})
+        for page_id, page_data in pages.items():
+            if int(page_id) > 0:
+                return page_data.get("title")
+        return None
+
     def _fetch_links_batch(self, page_title: str, continue_token: Optional[str] = None) -> tuple[Set[str], Optional[str]]:
-        """
-        Fetch a batch of links from a Wikipedia page, handling pagination from the MediaWiki API.
-        Takes a page title, an optional continuation token, and returns a set of the linked page 
-        titles as well as the continuation token for the next batch (if more calls are needed).
-        """
         params = {
             "action": "query",
             "format": "json",
             "titles": page_title,
             "prop": "links",
-            "pllimit": "max",  # Asking for the maximum number of links per request
-            "plnamespace": 0,  # Only get links to main namespace (articles)
+            "pllimit": "max",
+            "plnamespace": 0,
         }
-        
         if continue_token:
             params["plcontinue"] = continue_token
-        
-        response = self._make_api_request(params)
-        
-        # Extract links from response
+        response = self._wiki_get(params)
         links = set()
         pages = response.get("query", {}).get("pages", {})
-        
-        for page_id, page_data in pages.items():
+        for _, page_data in pages.items():
             if "links" in page_data:
                 for link in page_data["links"]:
                     links.add(link["title"])
-        
-        # Check if there are more results
         next_continue = response.get("continue", {}).get("plcontinue")
-        
         return links, next_continue
-    
-    def _make_api_request(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Make a GET request to the MediaWiki API using a dictionary of parameters. Returns the JSON response.
-        """
-        headers = {
-            "User-Agent": self.user_agent
-        }
-        
-        try:
-            response = requests.get(self.api_url, params=params, headers=headers, timeout=self.timeout)
-            response.raise_for_status()
-            return response.json()
-        except requests.Timeout:
-            raise requests.RequestException("Request to Wikipedia API timed out")
-        except requests.RequestException as e:
-            raise requests.RequestException(f"Error making API request: {e}")

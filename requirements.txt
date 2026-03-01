@@ -1,3 +1,8 @@
 requests
 tinker
 python-dotenv
+fastapi
+uvicorn
+transformers
+beautifulsoup4
+lxml
