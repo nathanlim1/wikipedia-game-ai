@@ -1,7 +1,8 @@
 import os
+
 import tinker
-from tinker import types
 from dotenv import load_dotenv
+from tinker import types
 
 load_dotenv()
 
@@ -23,8 +24,14 @@ class TinkerLLM:
         self.tokenizer = self.sampling_client.get_tokenizer()
         print("Tinker SamplingClient initialized.")
 
-    def chat(self, messages: list[dict], max_tokens: int = 1024, temperature: float = 0.7, 
-             stop_sequences: list[str] = None) -> str:
+    def chat(
+        self,
+        messages: list[dict],
+        max_tokens: int = 1024,
+        temperature: float = 0.7,
+        stop_sequences: list[str] = None,
+        timeout_s: float | None = None,
+    ) -> str:
         """
         Generate a chat completion.
 
@@ -81,7 +88,13 @@ class TinkerLLM:
         )
         
         # Block and get result
-        result = future.result()
+        if timeout_s is not None:
+            try:
+                result = future.result(timeout=timeout_s)
+            except TypeError:
+                result = future.result()
+        else:
+            result = future.result()
         
         if not result.sequences:
             return ""
@@ -90,7 +103,13 @@ class TinkerLLM:
         output_text = self.tokenizer.decode(result.sequences[0].tokens)
         return output_text
 
-    def completion(self, prompt_text: str, max_tokens: int = 1024, temperature: float = 0.7) -> str:
+    def completion(
+        self,
+        prompt_text: str,
+        max_tokens: int = 1024,
+        temperature: float = 0.7,
+        timeout_s: float | None = None,
+    ) -> str:
         """
         Generate a text completion (non-chat).
         """
@@ -108,7 +127,13 @@ class TinkerLLM:
             sampling_params=params
         )
         
-        result = future.result()
+        if timeout_s is not None:
+            try:
+                result = future.result(timeout=timeout_s)
+            except TypeError:
+                result = future.result()
+        else:
+            result = future.result()
         if not result.sequences:
             return ""
             
