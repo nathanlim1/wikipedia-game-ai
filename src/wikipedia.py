@@ -138,6 +138,92 @@ class WikipediaClient:
 
         return titles, title_to_anchor
 
+    def get_page_with_structure(
+        self, title: str, max_total: int = 6000
+    ) -> Dict[str, Any]:
+        """Return page subheadings and links annotated with which section they appear in.
+
+        Returns a dict with:
+          subheadings  - ordered list of h2/h3 heading texts (wiki-navbox headings excluded)
+          links        - ordered list of unique destination titles
+          link_sections - mapping from destination title to the section heading it appears under
+          anchor_map   - mapping from destination title to the anchor text of the first occurrence
+        """
+        data = self._wiki_get({"action": "parse", "format": "json", "page": title, "prop": "text", "redirects": 1})
+        if "error" in data:
+            raise ValueError(f"Wikipedia parse error for '{title}': {data['error']}")
+
+        html = data["parse"]["text"]["*"]
+        soup = BeautifulSoup(html, "lxml")
+        root = soup.find("div", class_="mw-parser-output") or soup
+
+        for selector in [
+            "div.navbox",
+            "div.vertical-navbox",
+            "table.navbox",
+            "div.reflist",
+            "ol.references",
+            "div.mw-references-wrap",
+            "div.catlinks",
+            "div.toc",
+            "span.mw-editsection",
+            "sup.reference",
+        ]:
+            for node in root.select(selector):
+                node.decompose()
+
+        subheadings: List[str] = []
+        seen_headings: Set[str] = set()
+        links: List[str] = []
+        seen_links: Set[str] = set()
+        link_sections: Dict[str, str] = {}
+        anchor_map: Dict[str, str] = {}
+        current_section = ""
+
+        for node in root.descendants:
+            if not hasattr(node, "name"):
+                continue
+            if node.name in ("h2", "h3"):
+                heading_text = node.get_text(" ", strip=True)
+                heading_text = re.sub(r"\[edit\].*$", "", heading_text).strip()
+                if heading_text and heading_text not in seen_headings:
+                    subheadings.append(heading_text)
+                    seen_headings.add(heading_text)
+                current_section = heading_text
+                continue
+            if node.name != "a":
+                continue
+            href = node.get("href", "")
+            if not href.startswith("/wiki/"):
+                continue
+            classes = node.get("class") or []
+            if "new" in classes:
+                continue
+            slug = href.split("/wiki/", 1)[1].split("#", 1)[0]
+            if not slug or ":" in slug:
+                continue
+            destination_title = node.get("title")
+            if not destination_title:
+                destination_title = unquote(slug).replace("_", " ")
+            destination_title = destination_title.strip()
+            if not destination_title or destination_title == "Main Page":
+                continue
+            anchor_text = node.get_text(" ", strip=True) or destination_title
+            if destination_title not in seen_links:
+                seen_links.add(destination_title)
+                links.append(destination_title)
+                link_sections[destination_title] = current_section
+                anchor_map[destination_title] = anchor_text
+            if len(links) >= max_total:
+                break
+
+        return {
+            "subheadings": subheadings,
+            "links": links,
+            "link_sections": link_sections,
+            "anchor_map": anchor_map,
+        }
+
     def get_links_from_page(self, page_title: str) -> Set[str]:
         normalized_title = self._get_normalized_title(page_title)
         if not normalized_title:

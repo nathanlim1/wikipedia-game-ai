@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
 from src.agents.default_agent import DefaultAgent
+from src.agents.planning_agent import PlanningAgent
 from src.agents.registry import AgentRegistry
 from src.game.runner import GameRunner
 from src.game.session_store import InMemorySessionStore
@@ -24,6 +25,7 @@ def create_app() -> FastAPI:
 
     registry = AgentRegistry()
     registry.register(DefaultAgent(wiki_client=wiki_client, llm_client=llm_client), is_default=True)
+    registry.register(PlanningAgent(wiki_client=wiki_client, llm_client=llm_client))
 
     runner = GameRunner(
         session_store=InMemorySessionStore(),
@@ -38,7 +40,7 @@ def create_app() -> FastAPI:
     def home():
         return HTMLResponse(INDEX_HTML)
 
-    app.include_router(create_router(runner))
+    app.include_router(create_router(runner, registry))
     return app
 
 

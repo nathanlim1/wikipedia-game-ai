@@ -6,3 +6,10 @@ uvicorn
 transformers
 beautifulsoup4
 lxml
+langgraph
+langchain-core
+rank-bm25
+fastembed
+flashrank
+numpy
+typing-extensions

@@ -6,6 +6,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from src.agents.registry import AgentRegistry
 from src.game.runner import GameRunner
 
 
@@ -19,8 +20,15 @@ class StepRequest(BaseModel):
     session_id: str
 
 
-def create_router(runner: GameRunner) -> APIRouter:
+def create_router(runner: GameRunner, registry: AgentRegistry) -> APIRouter:
     router = APIRouter()
+
+    @router.get("/api/agents")
+    def api_agents():
+        return {
+            "agents": registry.list_agent_ids(),
+            "default": registry.default_agent_id(),
+        }
 
     @router.post("/api/start")
     def api_start(req: StartRequest):
