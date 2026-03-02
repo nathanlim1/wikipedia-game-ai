@@ -224,16 +224,6 @@ class PlanningAgent:
         new_results: List[Dict[str, Any]] = []
         new_candidates: List[str] = []
 
-        for query in queries:
-            if not query:
-                continue
-            hits = page_index.search(query, k=FINAL_TOP_K)
-            valid_hits = [h for h in hits if h[0] not in tried_from and h[0] not in path_set]
-            new_results.append({"query": query, "top_hits": valid_hits})
-            for title, _, _ in valid_hits:
-                if title not in new_candidates:
-                    new_candidates.append(title)
-
         if state["search_round"] == 0:
             target_hits = page_index.search(state["target_page"], k=20)
             valid_target_hits = [
@@ -242,6 +232,16 @@ class PlanningAgent:
             ]
             new_results.append({"query": state["target_page"], "top_hits": valid_target_hits})
             for title, _, _ in valid_target_hits:
+                if title not in new_candidates:
+                    new_candidates.append(title)
+
+        for query in queries:
+            if not query:
+                continue
+            hits = page_index.search(query, k=FINAL_TOP_K)
+            valid_hits = [h for h in hits if h[0] not in tried_from and h[0] not in path_set]
+            new_results.append({"query": query, "top_hits": valid_hits})
+            for title, _, _ in valid_hits:
                 if title not in new_candidates:
                     new_candidates.append(title)
 
