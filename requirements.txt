@@ -13,3 +13,4 @@ fastembed
 flashrank
 numpy
 typing-extensions
+torch
