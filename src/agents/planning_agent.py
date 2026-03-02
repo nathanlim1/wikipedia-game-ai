@@ -1,26 +1,10 @@
-"""PlanningAgent — LangGraph-based Wikipedia navigator with explicit hypotheses.
-
-Each step runs a four-node LangGraph graph:
-  inspect_page  →  hypothesize  →  search  →  decide
-                                        ↑          |
-                                        └──────────┘ (if more searches requested, max 3 rounds)
-
-The agent expresses explicit hypotheses about why sections of the current page
-might lead toward the target, then uses BM25 + bi-encoder + cross-encoder
-retrieval over the page's links to find promising candidates before committing
-to a move.
-"""
-
 from __future__ import annotations
-
 import json
 import re
-from typing import Any, Dict, List, Optional, Tuple
-
+from typing import Any, Dict, List, Optional
 from langgraph.graph import END, StateGraph
 from typing_extensions import TypedDict
-
-from src.retrieval.wiki_search import WikiPageIndex, build_page_index, load_models
+from src.retrieval import WikiPageIndex, build_page_index, load_models
 from src.tinker_llm import TinkerLLM
 from src.wikipedia import WikipediaClient
 
@@ -247,6 +231,17 @@ class PlanningAgent:
             valid_hits = [h for h in hits if h[0] not in tried_from and h[0] not in path_set]
             new_results.append({"query": query, "top_hits": valid_hits})
             for title, _, _ in valid_hits:
+                if title not in new_candidates:
+                    new_candidates.append(title)
+
+        if state["search_round"] == 0:
+            target_hits = page_index.search(state["target_page"], k=20)
+            valid_target_hits = [
+                h for h in target_hits
+                if h[0] not in tried_from and h[0] not in path_set
+            ]
+            new_results.append({"query": state["target_page"], "top_hits": valid_target_hits})
+            for title, _, _ in valid_target_hits:
                 if title not in new_candidates:
                     new_candidates.append(title)
 

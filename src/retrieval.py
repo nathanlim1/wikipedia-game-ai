@@ -1,19 +1,3 @@
-"""Three-stage hybrid retrieval over a single Wikipedia page's link set.
-
-Pipeline
---------
-1. BM25 recall        — fast keyword matching, keeps top ``bm25_k`` candidates
-2. Bi-encoder         — ONNX-backed fastembed cosine similarity, keeps top ``bi_k``
-   Both sets are fused with min-max normalisation and deduplicated into a pool.
-3. Cross-encoder      — ONNX-backed flashrank reranker jointly scores (query, title)
-   pairs for high-precision final ranking, returns top ``k`` results.
-
-All three models are passed in at construction time so the caller can cache them
-across many pages (only one load per agent lifetime).  The bi-encoder and
-cross-encoder use ONNX Runtime under the hood (via fastembed / flashrank) and
-have no dependency on ``transformers`` or PyTorch.
-"""
-
 from __future__ import annotations
 
 import math
