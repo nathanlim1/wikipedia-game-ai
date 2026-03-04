@@ -27,6 +27,7 @@ class GameRunner:
         target_title: str,
         agent_id: Optional[str] = None,
         llm_choices: Optional[int] = None,
+        retrieval_top_k: Optional[int] = None,
     ) -> Dict[str, Any]:
         agent = self._agent_registry.get(agent_id)
         session = agent.initialize_session(start_title=start_title, target_title=target_title)
@@ -36,6 +37,8 @@ class GameRunner:
             n = max(1, llm_choices)
             session["llm_choices"] = n
             session["candidate_pool"] = max(n, CANDIDATE_POOL)
+        if agent.agent_id == "planning" and retrieval_top_k is not None:
+            session["retrieval_top_k"] = max(1, retrieval_top_k)
         session_id = self._session_store.create(session)
         return {
             "session_id": session_id,

@@ -83,6 +83,7 @@ class StepState(TypedDict):
     search_results: List[Dict[str, Any]]
     candidate_pool: List[str]
     search_round: int
+    retrieval_top_k: int
 
     # ── Decision (filled by decide) ──────────────────────────────────────────
     chosen_link: Optional[str]
@@ -225,7 +226,7 @@ class PlanningAgent:
         new_candidates: List[str] = []
 
         if state["search_round"] == 0:
-            target_hits = page_index.search(state["target_page"], k=20)
+            target_hits = page_index.search(state["target_page"], k=state["retrieval_top_k"])
             valid_target_hits = [
                 h for h in target_hits
                 if h[0] not in tried_from and h[0] not in path_set
@@ -238,7 +239,7 @@ class PlanningAgent:
         for query in queries:
             if not query:
                 continue
-            hits = page_index.search(query, k=FINAL_TOP_K)
+            hits = page_index.search(query, k=state["retrieval_top_k"])
             valid_hits = [h for h in hits if h[0] not in tried_from and h[0] not in path_set]
             new_results.append({"query": query, "top_hits": valid_hits})
             for title, _, _ in valid_hits:
@@ -395,6 +396,7 @@ class PlanningAgent:
             "search_results": [],
             "candidate_pool": [],
             "search_round": 0,
+            "retrieval_top_k": session.get("retrieval_top_k", FINAL_TOP_K),
             # decision — filled by decide
             "chosen_link": None,
             "chosen_reasoning": "",

@@ -62,6 +62,10 @@ INDEX_HTML = r"""
       <label>LLM candidates</label>
       <input id="llmChoices" type="number" min="1" max="4096" value="28" style="width:90px;"/>
     </div>
+    <div id="retrievalTopKWrap" style="display:none;">
+      <label>Results per query</label>
+      <input id="retrievalTopK" type="number" min="1" max="200" value="10" style="width:90px;"/>
+    </div>
     <div class="model-wrap">
       <label>Model</label>
       <div class="model-row">
@@ -118,8 +122,10 @@ INDEX_HTML = r"""
 
   async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-  function updateLlmChoicesVisibility() {
-    el("llmChoicesWrap").style.display = el("agentSelect").value === "default" ? "" : "none";
+  function updateAgentSettings() {
+    const agent = el("agentSelect").value;
+    el("llmChoicesWrap").style.display    = agent === "default"  ? "" : "none";
+    el("retrievalTopKWrap").style.display = agent === "planning" ? "" : "none";
   }
 
   // ── Populate agent selector on load ────────────────────────────────────
@@ -136,13 +142,13 @@ INDEX_HTML = r"""
         if (id === data.default) opt.selected = true;
         sel.appendChild(opt);
       }
-      updateLlmChoicesVisibility();
+      updateAgentSettings();
     } catch (e) {
       console.error("Could not load agent list:", e);
     }
   })();
 
-  el("agentSelect").addEventListener("change", updateLlmChoicesVisibility);
+  el("agentSelect").addEventListener("change", updateAgentSettings);
 
   // ── Populate model selector on load ────────────────────────────────────
   (async () => {
@@ -251,6 +257,7 @@ INDEX_HTML = r"""
       target_title: el("target").value.trim(),
       agent_id: agentId || null,
       llm_choices: agentId === "default" ? parseInt(el("llmChoices").value, 10) : null,
+      retrieval_top_k: agentId === "planning" ? parseInt(el("retrievalTopK").value, 10) : null,
     };
 
     logLine(">>> Starting run…", "log-dim");
