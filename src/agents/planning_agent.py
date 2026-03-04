@@ -323,9 +323,9 @@ class PlanningAgent:
 
             if chosen_link and chosen_link not in state["links"]:
                 chosen_link = None
-        except Exception:
+        except Exception as exc:
             chosen_link = candidate_pool[0] if candidate_pool else None
-            reasoning = "(LLM error — picked top retrieval result as fallback)"
+            reasoning = f"(LLM error — picked top retrieval result as fallback: {exc})"
 
         if request_more and search_round >= MAX_SEARCH_ROUNDS:
             request_more = False
@@ -479,6 +479,7 @@ def _parse_json_first(text: str) -> Dict[str, Any]:
     text = text.strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
+        print(f"ERROR: No JSON found. Raw: {text}")
         raise ValueError(f"No JSON found in LLM output: {text[:200]}")
     return json.loads(match.group(0))
 

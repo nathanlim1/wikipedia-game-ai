@@ -1,18 +1,16 @@
 from __future__ import annotations
-
 import json
 import random
 import re
 from concurrent.futures import TimeoutError as FutureTimeoutError
 from typing import Any, Dict, List, Optional, Tuple
-
 from src.tinker_llm import TinkerLLM
 from src.wikipedia import WikipediaClient
 
 
 CANDIDATE_POOL = 128
 LLM_CHOICES = 28
-LLM_TIMEOUT_S = 20
+LLM_TIMEOUT_S = 60
 
 DECISION_INSTRUCTIONS = """Return ONLY valid JSON. No extra text.
 
@@ -142,12 +140,12 @@ class DefaultAgent:
             )
             if 0 <= llm_idx < len(llm_view):
                 idx = llm_idx
-        except FutureTimeoutError:
+        except FutureTimeoutError as exc:
             idx = self.best_fallback_index(llm_scores)
-            analysis = "(LLM timeout; heuristic fallback)"
-        except Exception:
+            analysis = f"(LLM timeout; heuristic fallback: {exc})"
+        except Exception as exc:
             idx = self.best_fallback_index(llm_scores)
-            analysis = "(LLM error; heuristic fallback)"
+            analysis = f"(LLM error; heuristic fallback: {exc})"
 
         chosen = llm_view[idx] if idx is not None else llm_view[0]
 
@@ -351,6 +349,7 @@ class DefaultAgent:
         output_text = output_text.strip()
         match = re.search(r"\{.*\}", output_text, re.DOTALL)
         if not match:
+            print(f"ERROR: No JSON found. Raw: {output_text}")
             raise ValueError(f"No JSON found. Raw: {output_text[:200]}")
         return json.loads(match.group(0))
 
@@ -408,7 +407,7 @@ class DefaultAgent:
             candidate_scores=candidate_scores,
             recent_path=recent_path,
         )
-        text = self.llm.chat(messages, max_tokens=260, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
+        text = self.llm.chat(messages, max_tokens=512, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
         data = self.parse_json_first(text)
         idx = int(data["choice_index"])
         analysis = str(data.get("analysis", "")).strip()
