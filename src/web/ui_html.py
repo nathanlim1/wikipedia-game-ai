@@ -40,7 +40,7 @@ INDEX_HTML = r"""
   </style>
 </head>
 <body>
-  <h1>Wiki Maze Solver <span class="small">(Tinker AI)</span></h1>
+  <h1>Wikipedia Game AI <span class="small">(Developed by The Code Ninjas)</span></h1>
 
   <div class="row">
     <div>
@@ -51,9 +51,16 @@ INDEX_HTML = r"""
       <label>Target Wikipedia page title</label>
       <input id="target" value=""/>
     </div>
+  </div>
+
+  <div class="row" style="margin-top:12px; margin-bottom:24px;">
     <div>
       <label>Agent</label>
       <select id="agentSelect"><option value="">loading…</option></select>
+    </div>
+    <div id="llmChoicesWrap" style="display:none;">
+      <label>LLM candidates</label>
+      <input id="llmChoices" type="number" min="1" max="4096" value="28" style="width:90px;"/>
     </div>
     <div class="model-wrap">
       <label>Model</label>
@@ -111,6 +118,10 @@ INDEX_HTML = r"""
 
   async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+  function updateLlmChoicesVisibility() {
+    el("llmChoicesWrap").style.display = el("agentSelect").value === "default" ? "" : "none";
+  }
+
   // ── Populate agent selector on load ────────────────────────────────────
   (async () => {
     try {
@@ -125,10 +136,13 @@ INDEX_HTML = r"""
         if (id === data.default) opt.selected = true;
         sel.appendChild(opt);
       }
+      updateLlmChoicesVisibility();
     } catch (e) {
       console.error("Could not load agent list:", e);
     }
   })();
+
+  el("agentSelect").addEventListener("change", updateLlmChoicesVisibility);
 
   // ── Populate model selector on load ────────────────────────────────────
   (async () => {
@@ -236,6 +250,7 @@ INDEX_HTML = r"""
       start_title: el("start").value.trim(),
       target_title: el("target").value.trim(),
       agent_id: agentId || null,
+      llm_choices: agentId === "default" ? parseInt(el("llmChoices").value, 10) : null,
     };
 
     logLine(">>> Starting run…", "log-dim");

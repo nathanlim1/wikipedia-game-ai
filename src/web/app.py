@@ -19,8 +19,6 @@ from src.wikipedia import WikipediaClient
 
 DEFAULT_MODEL_ID = os.getenv("TINKER_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
 
-# Models confirmed working via test_models.py (larger-parameter focus).
-# Default model is listed first.
 AVAILABLE_MODELS: list[dict[str, str]] = [
     {"id": "Qwen/Qwen3-30B-A3B-Instruct-2507",   "label": "Qwen3-30B · 30B Instruction (default)"},
     {"id": "Qwen/Qwen3-235B-A22B-Instruct-2507",  "label": "Qwen3-235B · 235B Instruction"},

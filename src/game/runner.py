@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 from typing import Any, Dict, Optional, Tuple
 
+from src.agents.default_agent import CANDIDATE_POOL
 from src.agents.registry import AgentRegistry
 from src.game.session_store import InMemorySessionStore
 
@@ -20,11 +21,21 @@ class GameRunner:
         self._safety_max_moves = safety_max_moves
         self._safety_max_seconds = safety_max_seconds
 
-    def start(self, start_title: str, target_title: str, agent_id: Optional[str] = None) -> Dict[str, Any]:
+    def start(
+        self,
+        start_title: str,
+        target_title: str,
+        agent_id: Optional[str] = None,
+        llm_choices: Optional[int] = None,
+    ) -> Dict[str, Any]:
         agent = self._agent_registry.get(agent_id)
         session = agent.initialize_session(start_title=start_title, target_title=target_title)
         session["agent_id"] = agent.agent_id
         session.setdefault("started_at", time.time())
+        if agent.agent_id == "default" and llm_choices is not None:
+            n = max(1, llm_choices)
+            session["llm_choices"] = n
+            session["candidate_pool"] = max(n, CANDIDATE_POOL)
         session_id = self._session_store.create(session)
         return {
             "session_id": session_id,

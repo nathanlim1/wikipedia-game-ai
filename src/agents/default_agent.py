@@ -10,7 +10,7 @@ from src.tinker_llm import TinkerLLM
 from src.wikipedia import WikipediaClient
 
 
-CANDIDATE_POOL = 120
+CANDIDATE_POOL = 128
 LLM_CHOICES = 28
 LLM_TIMEOUT_S = 20
 
@@ -77,6 +77,7 @@ class DefaultAgent:
                     target_keywords=session["target_keywords"],
                     path_set=session["path_set"],
                     tried_edges=session["tried_edges"],
+                    candidate_pool=session.get("candidate_pool", CANDIDATE_POOL),
                 )
             except Exception as exc:
                 if len(session["path"]) <= 1:
@@ -123,7 +124,7 @@ class DefaultAgent:
         current_extract = self.wiki.get_extract(current)
         target_extract = session["target_extract"]
 
-        llm_view = candidates[: min(LLM_CHOICES, len(candidates))]
+        llm_view = candidates[: min(session.get("llm_choices", LLM_CHOICES), len(candidates))]
         llm_scores = scores[: len(llm_view)]
 
         idx = None
@@ -228,6 +229,7 @@ class DefaultAgent:
         target_keywords: set[str],
         path_set: set[str],
         tried_edges_from_current: set[Tuple[str]],
+        candidate_pool: int = CANDIDATE_POOL,
     ) -> List[str]:
         filtered = []
         for title in outgoing:
@@ -248,7 +250,7 @@ class DefaultAgent:
             reverse=True,
         )
 
-        pool = scored[: min(CANDIDATE_POOL, len(scored))]
+        pool = scored[: min(candidate_pool, len(scored))]
         rest = scored[len(pool) :]
         if rest:
             pool += random.sample(rest, min(20, len(rest)))
@@ -259,7 +261,7 @@ class DefaultAgent:
             if title not in seen:
                 seen.add(title)
                 output.append(title)
-            if len(output) >= CANDIDATE_POOL:
+            if len(output) >= candidate_pool:
                 break
         return output
 
@@ -296,6 +298,7 @@ class DefaultAgent:
         target_keywords: set[str],
         path_set: set[str],
         tried_edges: Dict[str, set[str]],
+        candidate_pool: int = CANDIDATE_POOL,
     ) -> Dict[str, Any]:
         outgoing, title_to_anchor = self.wiki.get_visible_outgoing_links(page_title)
         tried_from = tried_edges.setdefault(page_title, set())
@@ -306,6 +309,7 @@ class DefaultAgent:
             target_keywords=target_keywords,
             path_set=path_set,
             tried_edges_from_current={(candidate,) for candidate in tried_from},
+            candidate_pool=candidate_pool,
         )
         scores = [self.heuristic_score(candidate, target_title, target_keywords) for candidate in candidates]
         return {

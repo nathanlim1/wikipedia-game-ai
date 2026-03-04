@@ -15,6 +15,7 @@ class StartRequest(BaseModel):
     start_title: str
     target_title: str
     agent_id: Optional[str] = None
+    llm_choices: Optional[int] = None
 
 
 class StepRequest(BaseModel):
@@ -64,6 +65,7 @@ def create_router(
                 start_title=req.start_title,
                 target_title=req.target_title,
                 agent_id=req.agent_id,
+                llm_choices=req.llm_choices,
             )
         except Exception as exc:
             return JSONResponse({"failure_reason": str(exc)}, status_code=400)
