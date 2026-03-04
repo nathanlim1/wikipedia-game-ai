@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from src.agents.registry import AgentRegistry
 from src.game.runner import GameRunner
+from src.web.model_manager import ModelManager
 
 
 class StartRequest(BaseModel):
@@ -20,7 +21,16 @@ class StepRequest(BaseModel):
     session_id: str
 
 
-def create_router(runner: GameRunner, registry: AgentRegistry) -> APIRouter:
+class SetModelRequest(BaseModel):
+    model_id: str
+
+
+def create_router(
+    runner: GameRunner,
+    registry: AgentRegistry,
+    model_manager: ModelManager,
+    available_models: list[dict[str, str]],
+) -> APIRouter:
     router = APIRouter()
 
     @router.get("/api/agents")
@@ -29,6 +39,23 @@ def create_router(runner: GameRunner, registry: AgentRegistry) -> APIRouter:
             "agents": registry.list_agent_ids(),
             "default": registry.default_agent_id(),
         }
+
+    @router.get("/api/models")
+    def api_models():
+        return {
+            "models": available_models,
+            "current": model_manager.current_id,
+        }
+
+    @router.post("/api/models")
+    def api_set_model(req: SetModelRequest):
+        try:
+            model_manager.set_model(req.model_id)
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        except Exception as exc:
+            return JSONResponse({"error": f"Failed to load model: {exc}"}, status_code=500)
+        return {"current": model_manager.current_id}
 
     @router.post("/api/start")
     def api_start(req: StartRequest):

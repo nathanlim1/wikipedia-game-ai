@@ -10,6 +10,14 @@ INDEX_HTML = r"""
     label { display: block; font-size: 12px; opacity: 0.8; margin-bottom: 6px; }
     input { width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 10px; }
     select { padding: 10px; border: 1px solid #ccc; border-radius: 10px; font-size: 14px; background: #fff; }
+    .model-wrap { position: relative; }
+    .model-row { display: flex; align-items: center; gap: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { display: none; width: 14px; height: 14px; border: 2px solid #ddd; border-top-color: #555; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+    #modelStatus { position: absolute; top: 100%; left: 0; margin-top: 4px; white-space: nowrap; font-size: 12px; font-weight: 600; pointer-events: none; }
+    .model-loading-state { color: #b06000; }
+    .model-ready-state   { color: #0a7a2a; }
+    .model-error-state   { color: #b3261e; }
     button { padding: 10px 14px; border: 0; border-radius: 12px; cursor: pointer; font-weight: 700; }
     button:disabled { opacity: 0.6; cursor: not-allowed; }
     .card { margin-top: 16px; padding: 14px; border: 1px solid #e5e5e5; border-radius: 14px; }
@@ -46,6 +54,14 @@ INDEX_HTML = r"""
     <div>
       <label>Agent</label>
       <select id="agentSelect"><option value="">loading…</option></select>
+    </div>
+    <div class="model-wrap">
+      <label>Model</label>
+      <div class="model-row">
+        <select id="modelSelect" style="min-width:260px;"><option value="">loading…</option></select>
+        <span id="modelSpinner" class="spinner"></span>
+      </div>
+      <div id="modelStatus"></div>
     </div>
     <div style="display:flex; gap:10px; align-items:end;">
       <button id="go">Run</button>
@@ -114,6 +130,67 @@ INDEX_HTML = r"""
     }
   })();
 
+  // ── Populate model selector on load ────────────────────────────────────
+  (async () => {
+    try {
+      const res = await fetch("/api/models");
+      const data = await res.json();
+      const sel = el("modelSelect");
+      sel.innerHTML = "";
+      for (const m of data.models) {
+        const opt = document.createElement("option");
+        opt.value = m.id;
+        opt.textContent = m.label;
+        if (m.id === data.current) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    } catch (e) {
+      console.error("Could not load model list:", e);
+    }
+  })();
+
+  // ── Model selector change ───────────────────────────────────────────────
+  el("modelSelect").addEventListener("change", async () => {
+    const sel = el("modelSelect");
+    const modelId = sel.value;
+    if (!modelId) return;
+
+    const modelLabel = sel.options[sel.selectedIndex].textContent;
+    const status = el("modelStatus");
+    const spinner = el("modelSpinner");
+
+    sel.disabled = true;
+    el("go").disabled = true;
+    spinner.style.display = "inline-block";
+    status.className = "model-loading-state";
+    status.textContent = `Initializing ${modelLabel}… this may take a few seconds`;
+
+    try {
+      const res = await fetch("/api/models", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({model_id: modelId})
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        status.className = "model-error-state";
+        status.textContent = `✗ Failed to load model: ${data.error || "unknown error"}`;
+      } else {
+        status.className = "model-ready-state";
+        status.textContent = `✓ ${modelLabel} ready`;
+        setTimeout(() => { status.textContent = ""; status.className = ""; }, 3000);
+      }
+    } catch (e) {
+      status.className = "model-error-state";
+      status.textContent = `✗ Error: ${e}`;
+      console.error("Model switch error:", e);
+    } finally {
+      spinner.style.display = "none";
+      sel.disabled = false;
+      el("go").disabled = false;
+    }
+  });
+
   // ── Stop button ─────────────────────────────────────────────────────────
   el("stop").addEventListener("click", () => {
     running = false;
@@ -154,6 +231,7 @@ INDEX_HTML = r"""
     setStatus("");
 
     const agentId = el("agentSelect").value;
+    const modelId = el("modelSelect").value;
     const payload = {
       start_title: el("start").value.trim(),
       target_title: el("target").value.trim(),
@@ -179,7 +257,9 @@ INDEX_HTML = r"""
       }
 
       sessionId = startData.session_id;
-      setStatus(`Running… <span class="pill">Start: ${startData.resolved_start}</span><span class="pill">Target: ${startData.resolved_target}</span><span class="pill">Agent: ${agentId}</span>`);
+      const modelSel = el("modelSelect");
+      const modelLabel = modelSel.options[modelSel.selectedIndex]?.textContent || modelId;
+      setStatus(`Running… <span class="pill">Start: ${startData.resolved_start}</span><span class="pill">Target: ${startData.resolved_target}</span><span class="pill">Agent: ${agentId}</span><span class="pill">Model: ${modelLabel}</span>`);
       logLine("RESOLVED_START:  " + startData.resolved_start, "log-dim");
       logLine("RESOLVED_TARGET: " + startData.resolved_target, "log-dim");
       logBlank();

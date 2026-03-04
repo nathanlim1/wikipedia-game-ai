@@ -28,3 +28,6 @@ class AgentRegistry:
 
     def list_agent_ids(self) -> list[str]:
         return sorted(self._agents.keys())
+
+    def agents(self) -> list[GameAgent]:
+        return list(self._agents.values())
