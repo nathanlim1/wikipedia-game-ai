@@ -15,6 +15,7 @@ from src.web.model_manager import ModelManager
 from src.web.routes import create_router
 from src.web.ui_html import INDEX_HTML
 from src.wikipedia import WikipediaClient
+from src.wikipath_client import WikipathClient
 
 
 DEFAULT_MODEL_ID = os.getenv("TINKER_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
@@ -39,9 +40,13 @@ def create_app() -> FastAPI:
     model_manager = ModelManager(registry=registry, valid_model_ids=valid_ids)
     model_manager.seed(DEFAULT_MODEL_ID, llm_client)
 
+    wikipath_client = WikipathClient()
+
     runner = GameRunner(
         session_store=InMemorySessionStore(),
         agent_registry=registry,
+        wiki_client=wiki_client,
+        wikipath_client=wikipath_client,
         safety_max_moves=800,
         safety_max_seconds=7 * 60,
     )

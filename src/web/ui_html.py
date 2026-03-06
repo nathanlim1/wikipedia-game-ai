@@ -29,6 +29,18 @@ INDEX_HTML = r"""
     #pathLine { white-space: pre-wrap; background: #f6f6f6; padding: 10px; border-radius: 12px; }
     #stepsBox { white-space: pre-wrap; background: #f6f6f6; padding: 10px; border-radius: 12px; }
     .pill { display:inline-block; font-size:12px; padding:3px 8px; border-radius:999px; background:#f1f1f1; margin-left:8px; }
+    /* Comparison card styles */
+    #optimalPathLine { white-space: pre-wrap; background: #f0f7f0; padding: 10px; border-radius: 12px; border-left: 3px solid #0a7a2a; }
+    #comparisonCard { display: none; } /* Hidden by default, shown via JavaScript */
+    .metrics-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .metrics-table th, .metrics-table td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e5e5e5; }
+    .metrics-table th { font-size: 13px; opacity: 0.7; font-weight: 600; }
+    .metrics-table td { font-size: 14px; }
+    .metrics-table .metric-value { font-weight: 700; font-size: 18px; }
+    .metric-good { color: #0a7a2a; }
+    .metric-warn { color: #b06000; }
+    .metric-bad  { color: #b3261e; }
+    .wp-unavailable { color: #888; font-style: italic; }
     /* Planning-agent log colours */
     .log-section   { color: #6ec6ff; }
     .log-hyp       { color: #c3e88d; }
@@ -94,6 +106,41 @@ INDEX_HTML = r"""
     <div id="stepsBox" class="mono"></div>
   </div>
 
+  <div class="card" id="comparisonCard">
+    <h3>Shortest Path Comparison <span class="small">(via Wikipath)</span></h3>
+    <div id="wpError" class="wp-unavailable" style="display:none;"></div>
+    <div id="wpContent">
+      <div><b>Optimal shortest path</b> <span id="optimalLengthBadge" class="pill"></span></div>
+      <div id="optimalPathLine" class="mono" style="margin-top:6px;"></div>
+
+      <div id="metricsWrap" style="display:none; margin-top:14px;">
+        <b>Performance Metrics</b>
+        <table class="metrics-table">
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Optimal path length</td>
+            <td id="metricOptimal" class="metric-value">-</td>
+          </tr>
+          <tr>
+            <td>LLM path length</td>
+            <td id="metricLLM" class="metric-value">-</td>
+          </tr>
+          <tr>
+            <td>Efficiency (optimal / LLM)</td>
+            <td id="metricEfficiency" class="metric-value">-</td>
+          </tr>
+          <tr>
+            <td>Number of shortest paths that exist</td>
+            <td id="metricCount" class="metric-value">-</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <h3>Console log</h3>
     <div id="log" class="mono"></div>
@@ -119,6 +166,96 @@ INDEX_HTML = r"""
   function setStatus(html) { el("statusLine").innerHTML = html; }
   function setPath(text)   { el("pathLine").textContent = text; }
   function setSteps(text)  { el("stepsBox").textContent = text; }
+
+  // ── Comparison panel helpers ────────────────────────────────────────────
+  let optimalData = null;  // stored from /api/start response
+
+  function resetComparison() {
+    optimalData = null;
+    el("comparisonCard").style.display = "none";
+    el("wpError").style.display = "none";
+    el("wpContent").style.display = "block";
+    el("optimalPathLine").textContent = "";
+    el("optimalLengthBadge").textContent = "";
+    el("metricsWrap").style.display = "none";
+  }
+
+  function showOptimalPath(startData) {
+    // Debug logging
+    console.log("showOptimalPath called with:", {
+      optimal_path: startData.optimal_path,
+      optimal_length: startData.optimal_length,
+      wikipath_error: startData.wikipath_error
+    });
+
+    const card = el("comparisonCard");
+    if (!card) {
+      console.error("comparisonCard element not found!");
+      return;
+    }
+
+    // Always show the comparison card (must use "block", not "" — CSS default is display:none)
+    card.style.display = "block";
+    console.log("Comparison card display set to block");
+
+    if (startData.wikipath_error || startData.optimal_path == null) {
+      el("wpError").style.display = "";
+      el("wpError").textContent = "Shortest path data unavailable" +
+        (startData.wikipath_error ? ": " + startData.wikipath_error : 
+         " (Wikipath service may be unreachable or no path found)");
+      el("wpContent").style.display = "none";
+      console.log("Showing error message, hiding content");
+      return;
+    }
+
+    // Hide error, show content
+    el("wpError").style.display = "none";
+    el("wpContent").style.display = "";
+
+    optimalData = {
+      path: startData.optimal_path,
+      length: startData.optimal_length,
+      count: startData.optimal_count,
+    };
+
+    const pathStr = optimalData.path.join("  -->  ");
+    console.log("Setting path string:", pathStr);
+    el("optimalPathLine").textContent = pathStr || "(same page)";
+
+    const len = optimalData.length != null ? optimalData.length : "?";
+    const badgeText = len + " hop" + (len !== 1 ? "s" : "");
+    console.log("Setting length badge:", badgeText);
+    el("optimalLengthBadge").textContent = badgeText;
+    
+    console.log("Comparison card should now be visible with path:", pathStr);
+  }
+
+  function showMetrics(stepData) {
+    if (!optimalData) return;
+    el("metricsWrap").style.display = "";
+
+    const opt = optimalData.length != null ? optimalData.length : "-";
+    const llm = stepData.hops != null ? stepData.hops : "-";
+    el("metricOptimal").textContent = opt;
+    el("metricLLM").textContent = llm;
+
+    if (stepData.efficiency != null) {
+      const pct = (stepData.efficiency * 100).toFixed(1) + "%";
+      const effEl = el("metricEfficiency");
+      effEl.textContent = pct;
+      effEl.className = "metric-value " + (
+        stepData.efficiency >= 1.0 ? "metric-good" :
+        stepData.efficiency >= 0.5 ? "metric-warn" : "metric-bad"
+      );
+    } else if (stepData.success === false) {
+      el("metricEfficiency").textContent = "N/A (did not reach target)";
+      el("metricEfficiency").className = "metric-value metric-bad";
+    } else {
+      el("metricEfficiency").textContent = "-";
+    }
+
+    el("metricCount").textContent = optimalData.count != null ? optimalData.count.toLocaleString() : "-";
+  }
 
   async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -249,6 +386,7 @@ INDEX_HTML = r"""
     setPath("");
     setSteps("");
     setStatus("");
+    resetComparison();
 
     const agentId = el("agentSelect").value;
     const modelId = el("modelSelect").value;
@@ -285,6 +423,17 @@ INDEX_HTML = r"""
       logLine("RESOLVED_START:  " + startData.resolved_start, "log-dim");
       logLine("RESOLVED_TARGET: " + startData.resolved_target, "log-dim");
       logBlank();
+
+      // Show optimal shortest path from Wikipath
+      try {
+        showOptimalPath(startData);
+        if (startData.optimal_length != null) {
+          logLine("OPTIMAL_LENGTH:  " + startData.optimal_length + " hops (via Wikipath)", "log-dim");
+        }
+      } catch (err) {
+        console.error("Error showing optimal path:", err);
+        logLine("ERROR showing optimal path: " + err, "log-backtrack");
+      }
 
       while (running) {
         const stepRes = await fetch("/api/step", {
@@ -326,6 +475,7 @@ INDEX_HTML = r"""
           } else {
             setStatus(`<span class="bad">Failed</span>: ${stepData.failure_reason} <span class="pill">Target: ${stepData.resolved_target}</span>`);
           }
+          showMetrics(stepData);
           logLine(">>> Done.", "log-dim");
           break;
         }

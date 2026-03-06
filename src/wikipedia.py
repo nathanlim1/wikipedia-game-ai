@@ -224,6 +224,39 @@ class WikipediaClient:
             "anchor_map": anchor_map,
         }
 
+    def get_page_id(self, title: str) -> int:
+        """Resolve a page title to its numeric Wikipedia page ID."""
+        title = title.strip()
+        if not title:
+            raise ValueError("Empty title")
+        data = self._wiki_get(
+            {"action": "query", "format": "json", "redirects": 1, "titles": title}
+        )
+        pages = data.get("query", {}).get("pages", {})
+        for page_id_str, page_data in pages.items():
+            pid = int(page_id_str)
+            if pid > 0:
+                return pid
+        raise ValueError(f"Could not resolve page ID for: {title}")
+
+    def get_titles_from_ids(self, page_ids: List[int]) -> Dict[int, str]:
+        """Batch-resolve numeric page IDs to their titles (max 50 per request)."""
+        result: Dict[int, str] = {}
+        # MediaWiki API supports up to 50 IDs per request
+        for i in range(0, len(page_ids), 50):
+            batch = page_ids[i : i + 50]
+            ids_str = "|".join(str(pid) for pid in batch)
+            data = self._wiki_get(
+                {"action": "query", "format": "json", "pageids": ids_str}
+            )
+            pages = data.get("query", {}).get("pages", {})
+            for pid_str, page_data in pages.items():
+                pid = int(pid_str)
+                title = page_data.get("title")
+                if pid > 0 and title:
+                    result[pid] = title
+        return result
+
     def get_links_from_page(self, page_title: str) -> Set[str]:
         normalized_title = self._get_normalized_title(page_title)
         if not normalized_title:
