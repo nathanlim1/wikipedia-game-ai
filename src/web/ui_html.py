@@ -78,6 +78,16 @@ INDEX_HTML = r"""
       <label>Results per query</label>
       <input id="retrievalTopK" type="number" min="1" max="200" value="10" style="width:90px;"/>
     </div>
+    <div id="totSettingsWrap" style="display:none;">
+      <label>ToT: links to LLM</label>
+      <input id="totLlmCandidates" type="number" min="1" max="1000" value="50" style="width:70px;" title="Links sent to LLM for scoring per expansion"/>
+      <label>ToT: top k</label>
+      <input id="totK" type="number" min="1" max="50" value="5" style="width:60px;" title="Best k candidates added as children"/>
+    </div>
+    <div id="totExpansionsWrap" style="display:none;">
+      <label>ToT: expansions/step</label>
+      <input id="totExpansions" type="number" min="1" max="50" value="15" style="width:60px;"/>
+    </div>
     <div class="model-wrap">
       <label>Model</label>
       <div class="model-row">
@@ -107,14 +117,14 @@ INDEX_HTML = r"""
   </div>
 
   <div class="card" id="comparisonCard">
-    <h3>Shortest Path Comparison <span class="small">(via Wikipath)</span></h3>
+    <h3>Path Statistics</h3>
     <div id="wpError" class="wp-unavailable" style="display:none;"></div>
     <div id="wpContent">
-      <div><b>Optimal shortest path</b> <span id="optimalLengthBadge" class="pill"></span></div>
+      <div><b>Optimal shortest path</b> <span class="small">(via Wikipath)</span> <span id="optimalLengthBadge" class="pill"></span></div>
       <div id="optimalPathLine" class="mono" style="margin-top:6px;"></div>
 
       <div id="metricsWrap" style="display:none; margin-top:14px;">
-        <b>Performance Metrics</b>
+        <b>Agent Final Path Performance Metrics</b>
         <table class="metrics-table">
           <tr>
             <th>Metric</th>
@@ -135,6 +145,10 @@ INDEX_HTML = r"""
           <tr>
             <td>Number of shortest paths that exist</td>
             <td id="metricCount" class="metric-value">-</td>
+          </tr>
+          <tr>
+            <td>Time elapsed</td>
+            <td id="metricTime" class="metric-value">-</td>
           </tr>
         </table>
       </div>
@@ -255,6 +269,9 @@ INDEX_HTML = r"""
     }
 
     el("metricCount").textContent = optimalData.count != null ? optimalData.count.toLocaleString() : "-";
+
+    const timeSec = stepData.llm_to_target_seconds;
+    el("metricTime").textContent = timeSec != null ? timeSec + "s" : "N/A";
   }
 
   async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -263,6 +280,8 @@ INDEX_HTML = r"""
     const agent = el("agentSelect").value;
     el("llmChoicesWrap").style.display    = agent === "default"  ? "" : "none";
     el("retrievalTopKWrap").style.display = agent === "planning" ? "" : "none";
+    el("totSettingsWrap").style.display   = agent === "tot" ? "" : "none";
+    el("totExpansionsWrap").style.display = agent === "tot" ? "" : "none";
   }
 
   // ── Populate agent selector on load ────────────────────────────────────
@@ -396,6 +415,10 @@ INDEX_HTML = r"""
       agent_id: agentId || null,
       llm_choices: agentId === "default" ? parseInt(el("llmChoices").value, 10) : null,
       retrieval_top_k: agentId === "planning" ? parseInt(el("retrievalTopK").value, 10) : null,
+      tot_k: agentId === "tot" ? parseInt(el("totK").value, 10) : null,
+      tot_llm_candidates: agentId === "tot" ? parseInt(el("totLlmCandidates").value, 10) : null,
+      tot_expansions_per_step: agentId === "tot" ? parseInt(el("totExpansions").value, 10) : null,
+      tot_score_samples: agentId === "tot" ? 1 : null,
     };
 
     logLine(">>> Starting run…", "log-dim");
@@ -452,16 +475,27 @@ INDEX_HTML = r"""
         setPath(stepData.chain || "");
         setSteps(stepData.steps_text || "");
 
-        if (stepData.event) {
-          const ev = stepData.event;
+        const evList = stepData.events || (stepData.event ? [stepData.event] : []);
+        for (const ev of evList) {
+          if (!ev || !ev.type) continue;
 
-          if (ev.type === "move") {
+          if (ev.type === "exploration_start") {
+            logLine(`[ToT] ${ev.message || "Exploring..."} (${ev.expansions_planned || "?"} expansions planned)`, "log-section");
+            logBlank();
+          } else if (ev.type === "exploration_progress") {
+            const n = ev.expansion_n != null ? ev.expansion_n : "?";
+            const node = ev.node_expanded || "?";
+            const size = ev.frontier_size != null ? ev.frontier_size : "?";
+            const back = ev.backtracked ? " [branch switch]" : "";
+            logLine(`[ToT] Expansion ${n}: expanded ${node}, frontier size ${size}${back}`, "log-section");
+            logBlank();
+          } else if (ev.type === "move") {
             const m = ev.move;
             logLine(`${m.step}. ${m.from_title}  --["${m.anchor_text}"]-->  ${m.to_title}`, "log-move");
             if (m.analysis) logLine(`   Why: ${m.analysis}`, "log-dim");
+            if (m.tot_score != null) logLine(`   Score: ${m.tot_score}/100`, "log-dim");
             logPlanningDetails(ev);
             logBlank();
-
           } else if (ev.type === "backtrack") {
             logLine(`<<< BACKTRACK: ${ev.from_title} -> ${ev.to_title}  (${ev.reason})`, "log-backtrack");
             logPlanningDetails(ev);
@@ -471,7 +505,8 @@ INDEX_HTML = r"""
 
         if (stepData.done) {
           if (stepData.success) {
-            setStatus(`<span class="ok">Success</span> in <b>${stepData.hops}</b> hops <span class="pill">Target: ${stepData.resolved_target}</span>`);
+            const timeStr = stepData.llm_to_target_seconds != null ? ` (${stepData.llm_to_target_seconds}s)` : "";
+            setStatus(`<span class="ok">Success</span> in <b>${stepData.hops}</b> hops${timeStr} <span class="pill">Target: ${stepData.resolved_target}</span>`);
           } else {
             setStatus(`<span class="bad">Failed</span>: ${stepData.failure_reason} <span class="pill">Target: ${stepData.resolved_target}</span>`);
           }

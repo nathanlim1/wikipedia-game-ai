@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from src.agents.registry import AgentRegistry
+from src.llm_timing import TimingLLMWrapper
 from src.tinker_llm import TinkerLLM
 
 
@@ -24,7 +25,7 @@ class ModelManager:
 
     def _get_or_create(self, model_id: str) -> TinkerLLM:
         if model_id not in self._cache:
-            self._cache[model_id] = TinkerLLM(model=model_id)
+            self._cache[model_id] = TimingLLMWrapper(TinkerLLM(model=model_id))
         return self._cache[model_id]
 
     def set_model(self, model_id: str) -> None:
