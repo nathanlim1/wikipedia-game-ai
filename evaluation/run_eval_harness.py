@@ -20,6 +20,8 @@ from src.tinker_llm import TinkerLLM
 from src.wikipedia import WikipediaClient
 from src.wikipath_client import WikipathClient
 
+EVAL_DIR = Path(__file__).resolve().parent
+RESULTS_DIR = EVAL_DIR / "results"
 
 # Models: (model_id, default_llm_choices, planning_retrieval_top_k, tot_llm_candidates)
 MODELS = [
@@ -209,19 +211,25 @@ def main() -> int:
     parser.add_argument(
         "--paths",
         type=Path,
-        default=Path("PATHS_TO_TEST.TXT"),
-        help="Path file with Start -> End pairs (default: PATHS_TO_TEST.TXT)",
+        default=EVAL_DIR / "PATHS_TO_TEST.TXT",
+        help="Path file with Start -> End pairs",
     )
     parser.add_argument(
         "--output",
         type=Path,
         default=None,
-        help="Output JSON file (default: eval_results_YYYYMMDD_HHMMSS.json)",
+        help="Output JSON file (default: results/eval_harness_YYYYMMDD_HHMMSS.json)",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print planned runs without executing",
+    )
+    parser.add_argument(
+        "--runs",
+        type=int,
+        default=1,
+        help="Number of runs per config (default: 1)",
     )
     args = parser.parse_args()
 
@@ -230,18 +238,20 @@ def main() -> int:
         print(f"No paths found in {args.paths}", file=sys.stderr)
         return 1
 
-    runs: List[Tuple[Tuple[str, str], str, str, Dict[str, Any]]] = []
+    runs: List[Tuple[Tuple[str, str], str, str, Dict[str, Any], int]] = []
     for path in paths:
         for model_row in MODELS:
             model_id = model_row[0]
             for agent_id in AGENTS:
                 agent_config = get_agent_config(model_row, agent_id)
-                runs.append((path, model_id, agent_id, agent_config))
+                for run_idx in range(args.runs):
+                    runs.append((path, model_id, agent_id, agent_config, run_idx))
 
     if args.dry_run:
         print(f"Dry run: {len(runs)} runs planned")
-        for i, (path, model_id, agent_id, agent_config) in enumerate(runs):
-            print(f"  {i + 1}. {path[0]} -> {path[1]} | {model_id} | {agent_id} | {agent_config}")
+        for i, (path, model_id, agent_id, agent_config, run_idx) in enumerate(runs):
+            run_suffix = f" (run {run_idx + 1}/{args.runs})" if args.runs > 1 else ""
+            print(f"  {i + 1}. {path[0]} -> {path[1]} | {model_id} | {agent_id} | {agent_config}{run_suffix}")
         return 0
 
     wiki_client = WikipediaClient()
@@ -250,9 +260,11 @@ def main() -> int:
     results: List[Dict[str, Any]] = []
     total = len(runs)
 
-    for i, (path, model_id, agent_id, agent_config) in enumerate(runs):
+    RESULTS_DIR.mkdir(exist_ok=True)
+    for i, (path, model_id, agent_id, agent_config, run_idx) in enumerate(runs):
         run_num = i + 1
-        print(f"[{run_num}/{total}] {path[0]} -> {path[1]} | {model_id} | {agent_id}")
+        run_suffix = f" [run {run_idx + 1}/{args.runs}]" if args.runs > 1 else ""
+        print(f"[{run_num}/{total}] {path[0]} -> {path[1]} | {model_id} | {agent_id}{run_suffix}")
         try:
             r = run_one(
                 wiki_client=wiki_client,
@@ -262,6 +274,7 @@ def main() -> int:
                 agent_id=agent_id,
                 agent_config=agent_config,
             )
+            r["run_index"] = run_idx
             results.append(r)
             status = "OK" if r["success"] else "FAIL"
             print(f"  -> {status} | {r['hops']} hops | {r['time_s']:.1f}s")
@@ -272,6 +285,7 @@ def main() -> int:
                 "model_id": model_id,
                 "agent_id": agent_id,
                 "agent_config": agent_config,
+                "run_index": run_idx,
                 "success": False,
                 "hops": 0,
                 "final_path": None,
@@ -282,8 +296,16 @@ def main() -> int:
                 "efficiency": None,
             })
 
-    output_path = args.output or Path(f"eval_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
-    output_path.write_text(json.dumps(results, indent=2))
+    output_path = args.output or RESULTS_DIR / f"eval_harness_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    output_data = {
+        "meta": {
+            "script": "run_eval_harness.py",
+            "runs_per_config": args.runs,
+            "paths_file": str(args.paths),
+        },
+        "results": results,
+    }
+    output_path.write_text(json.dumps(output_data, indent=2))
     print(f"\nResults written to {output_path}")
 
     print_summary(results)

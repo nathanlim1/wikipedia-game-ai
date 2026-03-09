@@ -24,3 +24,7 @@ python main.py
 ```
 
 Opens at `http://127.0.0.1:8000` by default.
+
+## Evaluation
+
+All evaluation scripts and results live in `evaluation/`.
