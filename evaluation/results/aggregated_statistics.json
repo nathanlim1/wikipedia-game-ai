@@ -1,0 +1,1279 @@
+{
+  "overview": {
+    "total_runs": 213,
+    "total_success": 194,
+    "success_rate": 91.1,
+    "sources": [
+      "llm_sweep_20260308_233405.json",
+      "eval_results_20260309_012502.json",
+      "llm_sweep_20260308_232402.json",
+      "eval_harness_2runs_20260308_234433.json",
+      "failed_configs_retry_20260309_091309.json"
+    ],
+    "excluded_runs": 22,
+    "excluded_note": "Failed gpt-oss and Llama-70b runs excluded (system issues)"
+  },
+  "path_optimal_lengths": {
+    "Minecraft -> Chess": 2,
+    "McDonald's -> Yoga": 2,
+    "John Mulaney -> Apple": 3,
+    "Patrick Star -> John Wall": 3,
+    "OpenAI -> Esports": 2,
+    "Symphony -> United States Navy": 2,
+    "Billy Joel -> VANOS": 3,
+    "David Gilmour -> Michael Phelps": 3
+  },
+  "per_path": {
+    "Billy Joel -> VANOS": {
+      "total": 28,
+      "success": 24,
+      "success_rate": 85.7,
+      "avg_hops_success": 9.25,
+      "avg_time_s": 107.9,
+      "avg_efficiency": 0.359,
+      "optimal_length": 3
+    },
+    "David Gilmour -> Michael Phelps": {
+      "total": 26,
+      "success": 23,
+      "success_rate": 88.5,
+      "avg_hops_success": 6.87,
+      "avg_time_s": 104.1,
+      "avg_efficiency": 0.5718,
+      "optimal_length": 3
+    },
+    "John Mulaney -> Apple": {
+      "total": 24,
+      "success": 21,
+      "success_rate": 87.5,
+      "avg_hops_success": 4.29,
+      "avg_time_s": 136.1,
+      "avg_efficiency": 0.7095,
+      "optimal_length": 3
+    },
+    "McDonald's -> Yoga": {
+      "total": 27,
+      "success": 27,
+      "success_rate": 100.0,
+      "avg_hops_success": 3.56,
+      "avg_time_s": 82.0,
+      "avg_efficiency": 0.5766,
+      "optimal_length": 2
+    },
+    "Minecraft -> Chess": {
+      "total": 27,
+      "success": 27,
+      "success_rate": 100.0,
+      "avg_hops_success": 3.74,
+      "avg_time_s": 47.8,
+      "avg_efficiency": 0.6254,
+      "optimal_length": 2
+    },
+    "OpenAI -> Esports": {
+      "total": 26,
+      "success": 26,
+      "success_rate": 100.0,
+      "avg_hops_success": 3.35,
+      "avg_time_s": 48.1,
+      "avg_efficiency": 0.6346,
+      "optimal_length": 2
+    },
+    "Patrick Star -> John Wall": {
+      "total": 30,
+      "success": 24,
+      "success_rate": 80.0,
+      "avg_hops_success": 5.12,
+      "avg_time_s": 159.7,
+      "avg_efficiency": 0.659,
+      "optimal_length": 3
+    },
+    "Symphony -> United States Navy": {
+      "total": 25,
+      "success": 22,
+      "success_rate": 88.0,
+      "avg_hops_success": 2.23,
+      "avg_time_s": 33.4,
+      "avg_efficiency": 0.9243,
+      "optimal_length": 2
+    }
+  },
+  "per_model_per_path": {
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | Billy Joel -> VANOS": {
+      "total": 17,
+      "success": 13,
+      "avg_hops_success": 9.0,
+      "avg_time_s": 89.8,
+      "avg_efficiency": 0.3623
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | David Gilmour -> Michael Phelps": {
+      "total": 9,
+      "success": 6,
+      "avg_hops_success": 9.67,
+      "avg_time_s": 104.3,
+      "avg_efficiency": 0.3574
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | John Mulaney -> Apple": {
+      "total": 9,
+      "success": 6,
+      "avg_hops_success": 4.17,
+      "avg_time_s": 146.8,
+      "avg_efficiency": 0.725
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | McDonald's -> Yoga": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.89,
+      "avg_time_s": 120.2,
+      "avg_efficiency": 0.5259
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | Minecraft -> Chess": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 4.44,
+      "avg_time_s": 70.8,
+      "avg_efficiency": 0.4873
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | OpenAI -> Esports": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.67,
+      "avg_time_s": 56.1,
+      "avg_efficiency": 0.5556
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | Patrick Star -> John Wall": {
+      "total": 17,
+      "success": 11,
+      "avg_hops_success": 5.27,
+      "avg_time_s": 132.7,
+      "avg_efficiency": 0.6416
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | Symphony -> United States Navy": {
+      "total": 9,
+      "success": 6,
+      "avg_hops_success": 2.5,
+      "avg_time_s": 23.8,
+      "avg_efficiency": 0.8333
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | Billy Joel -> VANOS": {
+      "total": 7,
+      "success": 7,
+      "avg_hops_success": 9.14,
+      "avg_time_s": 120.4,
+      "avg_efficiency": 0.3326
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | David Gilmour -> Michael Phelps": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 7.56,
+      "avg_time_s": 119.5,
+      "avg_efficiency": 0.4611
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | John Mulaney -> Apple": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 4.44,
+      "avg_time_s": 128.3,
+      "avg_efficiency": 0.6889
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | McDonald's -> Yoga": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.33,
+      "avg_time_s": 48.6,
+      "avg_efficiency": 0.6111
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | Minecraft -> Chess": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 25.1,
+      "avg_efficiency": 0.6111
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | OpenAI -> Esports": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.67,
+      "avg_time_s": 38.3,
+      "avg_efficiency": 0.5741
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | Patrick Star -> John Wall": {
+      "total": 7,
+      "success": 7,
+      "avg_hops_success": 5.29,
+      "avg_time_s": 111.9,
+      "avg_efficiency": 0.6758
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | Symphony -> United States Navy": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 31.1,
+      "avg_efficiency": 1.0
+    },
+    "openai/gpt-oss-120b | Billy Joel -> VANOS": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 10.25,
+      "avg_time_s": 162.6,
+      "avg_efficiency": 0.3947
+    },
+    "openai/gpt-oss-120b | David Gilmour -> Michael Phelps": {
+      "total": 8,
+      "success": 8,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 86.5,
+      "avg_efficiency": 0.8571
+    },
+    "openai/gpt-oss-120b | John Mulaney -> Apple": {
+      "total": 6,
+      "success": 6,
+      "avg_hops_success": 4.17,
+      "avg_time_s": 131.8,
+      "avg_efficiency": 0.725
+    },
+    "openai/gpt-oss-120b | McDonald's -> Yoga": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.44,
+      "avg_time_s": 77.2,
+      "avg_efficiency": 0.5926
+    },
+    "openai/gpt-oss-120b | Minecraft -> Chess": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 2.78,
+      "avg_time_s": 47.5,
+      "avg_efficiency": 0.7778
+    },
+    "openai/gpt-oss-120b | OpenAI -> Esports": {
+      "total": 8,
+      "success": 8,
+      "avg_hops_success": 2.62,
+      "avg_time_s": 50.0,
+      "avg_efficiency": 0.7917
+    },
+    "openai/gpt-oss-120b | Patrick Star -> John Wall": {
+      "total": 6,
+      "success": 6,
+      "avg_hops_success": 4.67,
+      "avg_time_s": 291.8,
+      "avg_efficiency": 0.6714
+    },
+    "openai/gpt-oss-120b | Symphony -> United States Navy": {
+      "total": 7,
+      "success": 7,
+      "avg_hops_success": 2.29,
+      "avg_time_s": 48.6,
+      "avg_efficiency": 0.9048
+    }
+  },
+  "per_agent": {
+    "default": {
+      "total": 88,
+      "success": 88,
+      "success_rate": 100.0,
+      "avg_hops_success": 5.36,
+      "avg_time_s": 63.1,
+      "avg_efficiency": 0.5945,
+      "optimal_runs": 14,
+      "optimal_pct": 15.9
+    },
+    "planning": {
+      "total": 62,
+      "success": 57,
+      "success_rate": 91.9,
+      "avg_hops_success": 4.58,
+      "avg_time_s": 178.0,
+      "avg_efficiency": 0.6461,
+      "optimal_runs": 13,
+      "optimal_pct": 21.0
+    },
+    "tot": {
+      "total": 63,
+      "success": 49,
+      "success_rate": 77.8,
+      "avg_hops_success": 3.94,
+      "avg_time_s": 44.1,
+      "avg_efficiency": 0.6659,
+      "optimal_runs": 8,
+      "optimal_pct": 12.7
+    }
+  },
+  "per_model_per_agent": {
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default": {
+      "total": 40,
+      "success": 40,
+      "avg_hops_success": 5.92,
+      "avg_time_s": 67.5,
+      "avg_efficiency": 0.5438,
+      "optimal_runs": 5,
+      "optimal_pct": 12.5
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning": {
+      "total": 24,
+      "success": 19,
+      "avg_hops_success": 5.58,
+      "avg_time_s": 210.6,
+      "avg_efficiency": 0.5278,
+      "optimal_runs": 0,
+      "optimal_pct": 0.0
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot": {
+      "total": 24,
+      "success": 10,
+      "avg_hops_success": 3.8,
+      "avg_time_s": 30.3,
+      "avg_efficiency": 0.56,
+      "optimal_runs": 0,
+      "optimal_pct": 0.0
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default": {
+      "total": 24,
+      "success": 24,
+      "avg_hops_success": 5.25,
+      "avg_time_s": 51.4,
+      "avg_efficiency": 0.5924,
+      "optimal_runs": 3,
+      "optimal_pct": 12.5
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning": {
+      "total": 20,
+      "success": 20,
+      "avg_hops_success": 4.55,
+      "avg_time_s": 152.9,
+      "avg_efficiency": 0.6623,
+      "optimal_runs": 6,
+      "optimal_pct": 30.0
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot": {
+      "total": 24,
+      "success": 24,
+      "avg_hops_success": 4.54,
+      "avg_time_s": 35.5,
+      "avg_efficiency": 0.6297,
+      "optimal_runs": 3,
+      "optimal_pct": 12.5
+    },
+    "openai/gpt-oss-120b | default": {
+      "total": 24,
+      "success": 24,
+      "avg_hops_success": 4.54,
+      "avg_time_s": 67.4,
+      "avg_efficiency": 0.6811,
+      "optimal_runs": 6,
+      "optimal_pct": 25.0
+    },
+    "openai/gpt-oss-120b | planning": {
+      "total": 18,
+      "success": 18,
+      "avg_hops_success": 3.56,
+      "avg_time_s": 162.6,
+      "avg_efficiency": 0.7529,
+      "optimal_runs": 7,
+      "optimal_pct": 38.9
+    },
+    "openai/gpt-oss-120b | tot": {
+      "total": 15,
+      "success": 15,
+      "avg_hops_success": 3.07,
+      "avg_time_s": 80.0,
+      "avg_efficiency": 0.7945,
+      "optimal_runs": 5,
+      "optimal_pct": 33.3
+    }
+  },
+  "per_agent_per_path": {
+    "default | Billy Joel -> VANOS": {
+      "total": 17,
+      "success": 17,
+      "avg_hops_success": 9.88,
+      "avg_time_s": 94.1,
+      "avg_efficiency": 0.3346
+    },
+    "default | David Gilmour -> Michael Phelps": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 7.0,
+      "avg_time_s": 74.8,
+      "avg_efficiency": 0.5671
+    },
+    "default | John Mulaney -> Apple": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 54.0,
+      "avg_efficiency": 0.75
+    },
+    "default | McDonald's -> Yoga": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 47.4,
+      "avg_efficiency": 0.5
+    },
+    "default | Minecraft -> Chess": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 4.22,
+      "avg_time_s": 31.2,
+      "avg_efficiency": 0.4852
+    },
+    "default | OpenAI -> Esports": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.33,
+      "avg_time_s": 51.3,
+      "avg_efficiency": 0.6111
+    },
+    "default | Patrick Star -> John Wall": {
+      "total": 17,
+      "success": 17,
+      "avg_hops_success": 4.88,
+      "avg_time_s": 82.8,
+      "avg_efficiency": 0.671
+    },
+    "default | Symphony -> United States Navy": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 24.4,
+      "avg_efficiency": 1.0
+    },
+    "planning | Billy Joel -> VANOS": {
+      "total": 4,
+      "success": 3,
+      "avg_hops_success": 8.33,
+      "avg_time_s": 246.6,
+      "avg_efficiency": 0.3611
+    },
+    "planning | David Gilmour -> Michael Phelps": {
+      "total": 8,
+      "success": 8,
+      "avg_hops_success": 9.12,
+      "avg_time_s": 218.7,
+      "avg_efficiency": 0.3685
+    },
+    "planning | John Mulaney -> Apple": {
+      "total": 9,
+      "success": 8,
+      "avg_hops_success": 4.38,
+      "avg_time_s": 251.7,
+      "avg_efficiency": 0.6937
+    },
+    "planning | McDonald's -> Yoga": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.33,
+      "avg_time_s": 139.5,
+      "avg_efficiency": 0.6185
+    },
+    "planning | Minecraft -> Chess": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.11,
+      "avg_time_s": 78.1,
+      "avg_efficiency": 0.7984
+    },
+    "planning | OpenAI -> Esports": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.11,
+      "avg_time_s": 65.7,
+      "avg_efficiency": 0.6852
+    },
+    "planning | Patrick Star -> John Wall": {
+      "total": 5,
+      "success": 2,
+      "avg_hops_success": 10.0,
+      "avg_time_s": 604.9,
+      "avg_efficiency": 0.3297
+    },
+    "planning | Symphony -> United States Navy": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 2.44,
+      "avg_time_s": 51.5,
+      "avg_efficiency": 0.8519
+    },
+    "tot | Billy Joel -> VANOS": {
+      "total": 7,
+      "success": 4,
+      "avg_hops_success": 7.25,
+      "avg_time_s": 62.1,
+      "avg_efficiency": 0.4613
+    },
+    "tot | David Gilmour -> Michael Phelps": {
+      "total": 9,
+      "success": 6,
+      "avg_hops_success": 3.67,
+      "avg_time_s": 31.5,
+      "avg_efficiency": 0.85
+    },
+    "tot | John Mulaney -> Apple": {
+      "total": 6,
+      "success": 4,
+      "avg_hops_success": 4.75,
+      "avg_time_s": 85.9,
+      "avg_efficiency": 0.65
+    },
+    "tot | McDonald's -> Yoga": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.33,
+      "avg_time_s": 59.1,
+      "avg_efficiency": 0.6111
+    },
+    "tot | Minecraft -> Chess": {
+      "total": 9,
+      "success": 9,
+      "avg_hops_success": 3.89,
+      "avg_time_s": 34.1,
+      "avg_efficiency": 0.5926
+    },
+    "tot | OpenAI -> Esports": {
+      "total": 8,
+      "success": 8,
+      "avg_hops_success": 3.62,
+      "avg_time_s": 24.6,
+      "avg_efficiency": 0.6042
+    },
+    "tot | Patrick Star -> John Wall": {
+      "total": 8,
+      "success": 5,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 44.7,
+      "avg_efficiency": 0.75
+    },
+    "tot | Symphony -> United States Navy": {
+      "total": 7,
+      "success": 4,
+      "avg_hops_success": 2.25,
+      "avg_time_s": 21.6,
+      "avg_efficiency": 0.9167
+    }
+  },
+  "per_model_per_agent_per_path": {
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | Billy Joel -> VANOS": {
+      "total": 11,
+      "success": 11,
+      "avg_hops_success": 9.18,
+      "avg_time_s": 77.2,
+      "avg_efficiency": 0.36
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 7.0,
+      "avg_time_s": 80.5,
+      "avg_efficiency": 0.4286
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 39.0,
+      "avg_efficiency": 0.75
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 37.5,
+      "avg_efficiency": 0.5
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 5.0,
+      "avg_time_s": 25.7,
+      "avg_efficiency": 0.4
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 96.5,
+      "avg_efficiency": 0.5
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | Patrick Star -> John Wall": {
+      "total": 11,
+      "success": 11,
+      "avg_hops_success": 5.27,
+      "avg_time_s": 85.9,
+      "avg_efficiency": 0.6416
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 23.1,
+      "avg_efficiency": 1.0
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | Billy Joel -> VANOS": {
+      "total": 3,
+      "success": 2,
+      "avg_hops_success": 8.0,
+      "avg_time_s": 222.3,
+      "avg_efficiency": 0.375
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 12.33,
+      "avg_time_s": 229.1,
+      "avg_efficiency": 0.2861
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 2,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 293.8,
+      "avg_efficiency": 0.75
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.67,
+      "avg_time_s": 235.8,
+      "avg_efficiency": 0.5778
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 5.33,
+      "avg_time_s": 171.3,
+      "avg_efficiency": 0.3952
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 53.5,
+      "avg_efficiency": 0.6667
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | Patrick Star -> John Wall": {
+      "total": 3,
+      "success": 0,
+      "avg_hops_success": null,
+      "avg_time_s": 433.6,
+      "avg_efficiency": null
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 45.1,
+      "avg_efficiency": 0.6667
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | Billy Joel -> VANOS": {
+      "total": 3,
+      "success": 0,
+      "avg_hops_success": null,
+      "avg_time_s": 3.5,
+      "avg_efficiency": null
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 0,
+      "avg_hops_success": null,
+      "avg_time_s": 3.3,
+      "avg_efficiency": null
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 1,
+      "avg_hops_success": 5.0,
+      "avg_time_s": 107.7,
+      "avg_efficiency": 0.6
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 87.2,
+      "avg_efficiency": 0.5
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 15.3,
+      "avg_efficiency": 0.6667
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 18.2,
+      "avg_efficiency": 0.5
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | Patrick Star -> John Wall": {
+      "total": 3,
+      "success": 0,
+      "avg_hops_success": null,
+      "avg_time_s": 3.5,
+      "avg_efficiency": null
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 0,
+      "avg_hops_success": null,
+      "avg_time_s": 3.3,
+      "avg_efficiency": null
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | Billy Joel -> VANOS": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 10.0,
+      "avg_time_s": 103.5,
+      "avg_efficiency": 0.3
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 11.0,
+      "avg_time_s": 114.1,
+      "avg_efficiency": 0.2727
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 70.5,
+      "avg_efficiency": 0.75
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 41.4,
+      "avg_efficiency": 0.5
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 24.2,
+      "avg_efficiency": 0.5
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 20.1,
+      "avg_efficiency": 0.6667
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | Patrick Star -> John Wall": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 24.9,
+      "avg_efficiency": 0.75
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 12.8,
+      "avg_efficiency": 1.0
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | Billy Joel -> VANOS": {
+      "total": 1,
+      "success": 1,
+      "avg_hops_success": 9.0,
+      "avg_time_s": 319.4,
+      "avg_efficiency": 0.3333
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 7.33,
+      "avg_time_s": 220.1,
+      "avg_efficiency": 0.4107
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.67,
+      "avg_time_s": 250.4,
+      "avg_efficiency": 0.65
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 90.7,
+      "avg_efficiency": 0.6667
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 27.0,
+      "avg_efficiency": 1.0
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 72.3,
+      "avg_efficiency": 0.5
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | Patrick Star -> John Wall": {
+      "total": 1,
+      "success": 1,
+      "avg_hops_success": 13.0,
+      "avg_time_s": 599.0,
+      "avg_efficiency": 0.2308
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 52.5,
+      "avg_efficiency": 1.0
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | Billy Joel -> VANOS": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 8.33,
+      "avg_time_s": 71.1,
+      "avg_efficiency": 0.3651
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.33,
+      "avg_time_s": 24.3,
+      "avg_efficiency": 0.7
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.67,
+      "avg_time_s": 64.1,
+      "avg_efficiency": 0.6667
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 13.6,
+      "avg_efficiency": 0.6667
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 6.0,
+      "avg_time_s": 24.2,
+      "avg_efficiency": 0.3333
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 22.7,
+      "avg_efficiency": 0.5556
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | Patrick Star -> John Wall": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 36.5,
+      "avg_efficiency": 0.75
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 27.8,
+      "avg_efficiency": 1.0
+    },
+    "openai/gpt-oss-120b | default | Billy Joel -> VANOS": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 12.33,
+      "avg_time_s": 146.4,
+      "avg_efficiency": 0.2762
+    },
+    "openai/gpt-oss-120b | default | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 29.7,
+      "avg_efficiency": 1.0
+    },
+    "openai/gpt-oss-120b | default | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 52.5,
+      "avg_efficiency": 0.75
+    },
+    "openai/gpt-oss-120b | default | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 63.3,
+      "avg_efficiency": 0.5
+    },
+    "openai/gpt-oss-120b | default | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.67,
+      "avg_time_s": 43.7,
+      "avg_efficiency": 0.5556
+    },
+    "openai/gpt-oss-120b | default | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 37.4,
+      "avg_efficiency": 0.6667
+    },
+    "openai/gpt-oss-120b | default | Patrick Star -> John Wall": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.33,
+      "avg_time_s": 129.4,
+      "avg_efficiency": 0.7
+    },
+    "openai/gpt-oss-120b | default | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 37.2,
+      "avg_efficiency": 1.0
+    },
+    "openai/gpt-oss-120b | planning | David Gilmour -> Michael Phelps": {
+      "total": 2,
+      "success": 2,
+      "avg_hops_success": 7.0,
+      "avg_time_s": 200.9,
+      "avg_efficiency": 0.4286
+    },
+    "openai/gpt-oss-120b | planning | John Mulaney -> Apple": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 4.33,
+      "avg_time_s": 211.1,
+      "avg_efficiency": 0.7
+    },
+    "openai/gpt-oss-120b | planning | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.33,
+      "avg_time_s": 91.9,
+      "avg_efficiency": 0.6111
+    },
+    "openai/gpt-oss-120b | planning | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.0,
+      "avg_time_s": 36.0,
+      "avg_efficiency": 1.0
+    },
+    "openai/gpt-oss-120b | planning | OpenAI -> Esports": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.33,
+      "avg_time_s": 71.3,
+      "avg_efficiency": 0.8889
+    },
+    "openai/gpt-oss-120b | planning | Patrick Star -> John Wall": {
+      "total": 1,
+      "success": 1,
+      "avg_hops_success": 7.0,
+      "avg_time_s": 1124.6,
+      "avg_efficiency": 0.4286
+    },
+    "openai/gpt-oss-120b | planning | Symphony -> United States Navy": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.33,
+      "avg_time_s": 56.8,
+      "avg_efficiency": 0.8889
+    },
+    "openai/gpt-oss-120b | tot | Billy Joel -> VANOS": {
+      "total": 1,
+      "success": 1,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 211.2,
+      "avg_efficiency": 0.75
+    },
+    "openai/gpt-oss-120b | tot | David Gilmour -> Michael Phelps": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 67.1,
+      "avg_efficiency": 1.0
+    },
+    "openai/gpt-oss-120b | tot | McDonald's -> Yoga": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 76.4,
+      "avg_efficiency": 0.6667
+    },
+    "openai/gpt-oss-120b | tot | Minecraft -> Chess": {
+      "total": 3,
+      "success": 3,
+      "avg_hops_success": 2.67,
+      "avg_time_s": 63.0,
+      "avg_efficiency": 0.7778
+    },
+    "openai/gpt-oss-120b | tot | OpenAI -> Esports": {
+      "total": 2,
+      "success": 2,
+      "avg_hops_success": 2.5,
+      "avg_time_s": 36.9,
+      "avg_efficiency": 0.8334
+    },
+    "openai/gpt-oss-120b | tot | Patrick Star -> John Wall": {
+      "total": 2,
+      "success": 2,
+      "avg_hops_success": 4.0,
+      "avg_time_s": 119.1,
+      "avg_efficiency": 0.75
+    },
+    "openai/gpt-oss-120b | tot | Symphony -> United States Navy": {
+      "total": 1,
+      "success": 1,
+      "avg_hops_success": 3.0,
+      "avg_time_s": 57.8,
+      "avg_efficiency": 0.6667
+    }
+  },
+  "per_model_per_candidate_size": {
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | 1024": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 8.5,
+      "avg_time_s": 93.1,
+      "avg_efficiency": 0.4513
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | 128": {
+      "total": 28,
+      "success": 28,
+      "avg_hops_success": 5.25,
+      "avg_time_s": 62.6,
+      "avg_efficiency": 0.5441
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | 256": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 8.0,
+      "avg_time_s": 52.4,
+      "avg_efficiency": 0.6154
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | default | 64": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 6.0,
+      "avg_time_s": 91.6,
+      "avg_efficiency": 0.5625
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | planning | 12": {
+      "total": 24,
+      "success": 19,
+      "avg_hops_success": 5.58,
+      "avg_time_s": 210.6,
+      "avg_efficiency": 0.5278
+    },
+    "Qwen/Qwen3-30B-A3B-Instruct-2507 | tot | 128": {
+      "total": 24,
+      "success": 10,
+      "avg_hops_success": 3.8,
+      "avg_time_s": 30.3,
+      "avg_efficiency": 0.56
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | default | 1024": {
+      "total": 24,
+      "success": 24,
+      "avg_hops_success": 5.25,
+      "avg_time_s": 51.4,
+      "avg_efficiency": 0.5924
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | planning | 128": {
+      "total": 20,
+      "success": 20,
+      "avg_hops_success": 4.55,
+      "avg_time_s": 152.9,
+      "avg_efficiency": 0.6623
+    },
+    "meta-llama/Llama-3.3-70B-Instruct | tot | 1024": {
+      "total": 24,
+      "success": 24,
+      "avg_hops_success": 4.54,
+      "avg_time_s": 35.5,
+      "avg_efficiency": 0.6297
+    },
+    "openai/gpt-oss-120b | default | 1024": {
+      "total": 24,
+      "success": 24,
+      "avg_hops_success": 4.54,
+      "avg_time_s": 67.4,
+      "avg_efficiency": 0.6811
+    },
+    "openai/gpt-oss-120b | planning | 128": {
+      "total": 18,
+      "success": 18,
+      "avg_hops_success": 3.56,
+      "avg_time_s": 162.6,
+      "avg_efficiency": 0.7529
+    },
+    "openai/gpt-oss-120b | tot | 1024": {
+      "total": 15,
+      "success": 15,
+      "avg_hops_success": 3.07,
+      "avg_time_s": 80.0,
+      "avg_efficiency": 0.7945
+    }
+  },
+  "llm_sweep": {
+    "64": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 6.0,
+      "avg_time_s": 91.6,
+      "avg_efficiency": 0.5625
+    },
+    "128": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 6.5,
+      "avg_time_s": 99.8,
+      "avg_efficiency": 0.4714
+    },
+    "256": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 8.0,
+      "avg_time_s": 52.4,
+      "avg_efficiency": 0.6154
+    },
+    "1024": {
+      "total": 4,
+      "success": 4,
+      "avg_hops_success": 8.5,
+      "avg_time_s": 93.1,
+      "avg_efficiency": 0.4513
+    }
+  },
+  "failures": [
+    {
+      "path": "John Mulaney -> Apple",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "planning",
+      "reason": "Stopped by safety timer (420s)."
+    },
+    {
+      "path": "John Mulaney -> Apple",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "Agent step failed:"
+    },
+    {
+      "path": "John Mulaney -> Apple",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "Agent step failed:"
+    },
+    {
+      "path": "Patrick Star -> John Wall",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "planning",
+      "reason": "Stopped by safety timer (420s)."
+    },
+    {
+      "path": "Patrick Star -> John Wall",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "planning",
+      "reason": "Stopped by safety timer (420s)."
+    },
+    {
+      "path": "Patrick Star -> John Wall",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Patrick Star -> John Wall",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Symphony -> United States Navy",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Symphony -> United States Navy",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Billy Joel -> VANOS",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Billy Joel -> VANOS",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "David Gilmour -> Michael Phelps",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "David Gilmour -> Michael Phelps",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Patrick Star -> John Wall",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "planning",
+      "reason": "Stopped by safety timer (420s)."
+    },
+    {
+      "path": "Patrick Star -> John Wall",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Symphony -> United States Navy",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "Billy Joel -> VANOS",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "planning",
+      "reason": "Stopped by safety timer (420s)."
+    },
+    {
+      "path": "Billy Joel -> VANOS",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    },
+    {
+      "path": "David Gilmour -> Michael Phelps",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "agent": "tot",
+      "reason": "No usable outgoing links."
+    }
+  ]
+}
