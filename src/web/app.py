@@ -24,7 +24,6 @@ DEFAULT_MODEL_ID = os.getenv("TINKER_MODEL", "Qwen/Qwen3-30B-A3B-Instruct-2507")
 
 AVAILABLE_MODELS: list[dict[str, str]] = [
     {"id": "Qwen/Qwen3-30B-A3B-Instruct-2507",   "label": "Qwen3-30B · 30B Instruction (default)"},
-    {"id": "Qwen/Qwen3-235B-A22B-Instruct-2507",  "label": "Qwen3-235B · 235B Instruction"},
     {"id": "meta-llama/Llama-3.3-70B-Instruct",   "label": "Llama-3.3-70B · 70B Instruction"},
     {"id": "openai/gpt-oss-120b",                  "label": "GPT-OSS-120B · 120B Reasoning"},
 ]

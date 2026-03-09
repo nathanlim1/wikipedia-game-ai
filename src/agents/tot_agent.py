@@ -492,7 +492,8 @@ class ToTAgent(DefaultAgent):
             {"role": "user", "content": user_prompt},
         ]
 
-        text = self.llm.chat(messages, max_tokens=512, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
+        # Allow room for reasoning tokens + JSON (models like gpt-oss emit analysis first)
+        text = self.llm.chat(messages, max_tokens=2048, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
         data = self._parse_pick_json(text, candidate_titles, k)
         return data
 
@@ -529,7 +530,8 @@ class ToTAgent(DefaultAgent):
 
         all_scores: List[List[int]] = []
         for _ in range(score_samples):
-            text = self.llm.chat(messages, max_tokens=256, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
+            # Allow room for reasoning tokens + JSON (models like gpt-oss emit analysis first)
+            text = self.llm.chat(messages, max_tokens=1024, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
             data = self._parse_score_json(text)
             scores = data.get("scores", [])
             if len(scores) < len(candidate_titles):
@@ -556,7 +558,7 @@ class ToTAgent(DefaultAgent):
         output_text = re.sub(r"\s*```\s*$", "", output_text)
         match = re.search(r"\{.*\}", output_text, re.DOTALL)
         if not match:
-            raise ValueError(f"No JSON found. Raw: {output_text[:200]}")
+            raise ValueError(f"No JSON found. Raw: {output_text[:200]}... (len={len(output_text)})")
         try:
             data = json.loads(match.group(0))
         except json.JSONDecodeError:
