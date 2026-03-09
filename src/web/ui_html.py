@@ -507,6 +507,14 @@ INDEX_HTML = r"""
           if (stepData.success) {
             const timeStr = stepData.llm_to_target_seconds != null ? ` (${stepData.llm_to_target_seconds}s)` : "";
             setStatus(`<span class="ok">Success</span> in <b>${stepData.hops}</b> hops${timeStr} <span class="pill">Target: ${stepData.resolved_target}</span>`);
+            const pr = stepData.path_revision;
+            if (pr && pr.revised_hops < pr.original_hops) {
+              const saved = pr.original_hops - pr.revised_hops;
+              logLine(`Path revised: ${pr.original_hops} -> ${pr.revised_hops} hops (skipped ${saved} redundant steps)`, "log-section");
+              logLine("  Before: " + (pr.original_path || []).join("  -->  "), "log-dim");
+              logLine("  After:  " + (pr.revised_path || []).join("  -->  "), "log-dim");
+              logBlank();
+            }
           } else {
             setStatus(`<span class="bad">Failed</span>: ${stepData.failure_reason} <span class="pill">Target: ${stepData.resolved_target}</span>`);
           }

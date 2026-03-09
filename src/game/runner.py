@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional, Tuple
 from src.agents.default_agent import CANDIDATE_POOL
 from src.agents.registry import AgentRegistry
 from src.llm_timing import current_session_var
+from src.game.path_revision import moves_from_revised_path, revise_path
 from src.game.session_store import InMemorySessionStore
 from src.wikipedia import WikipediaClient
 from src.wikipath_client import WikipathClient
@@ -132,6 +133,7 @@ class GameRunner:
                 result = agent.step(session)
                 if session.get("done") and session.get("success"):
                     session["reached_target_at"] = time.time()
+                    self._maybe_revise_path(session)
                 events, event = self._normalize_events(result)
                 return self._payload(session, event, events), 200
             finally:
@@ -141,6 +143,35 @@ class GameRunner:
             session["success"] = False
             session["failure_reason"] = f"Agent step failed: {exc}"
             return self._payload(session, None, []), 200
+
+    def _maybe_revise_path(self, session: Dict[str, Any]) -> None:
+        """If path can be shortened using cached links, revise and update session."""
+        path = session.get("path", [])
+        links_cache = session.get("links_cache", {})
+        if not path or not links_cache:
+            return
+        revised = revise_path(path, links_cache)
+        if len(revised) >= len(path):
+            return
+        anchor_cache = session.get("anchor_cache", {})
+        revised_moves = moves_from_revised_path(revised, anchor_cache)
+        original_hops = len(session["moves"])
+        revised_hops = len(revised_moves)
+        session["path_revision"] = {
+            "original_path": list(path),
+            "revised_path": list(revised),
+            "original_hops": original_hops,
+            "revised_hops": revised_hops,
+        }
+        session["path"] = list(revised)
+        session["path_set"] = set(revised)
+        session["moves"] = revised_moves
+        log.info(
+            "Path revision: %d -> %d hops (saved %d)",
+            original_hops,
+            revised_hops,
+            original_hops - revised_hops,
+        )
 
     @staticmethod
     def _normalize_events(
@@ -179,7 +210,7 @@ class GameRunner:
             llm_to_target_seconds = round(reached_target_at - first_llm_at, 2)
 
         events_list = events if events is not None else ([event] if event else [])
-        return {
+        payload: Dict[str, Any] = {
             "done": session["done"],
             "success": session["success"],
             "failure_reason": session["failure_reason"],
@@ -200,3 +231,6 @@ class GameRunner:
             "efficiency": efficiency,
             "llm_to_target_seconds": llm_to_target_seconds,
         }
+        if session.get("path_revision"):
+            payload["path_revision"] = session["path_revision"]
+        return payload

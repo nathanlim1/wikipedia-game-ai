@@ -4,6 +4,7 @@ import re
 from typing import Any, Dict, List, Optional
 from langgraph.graph import END, StateGraph
 from typing_extensions import TypedDict
+from src.llm_timing import current_session_var
 from src.retrieval import WikiPageIndex, build_page_index, load_models
 from src.tinker_llm import TinkerLLM
 from src.wikipedia import WikipediaClient
@@ -157,6 +158,11 @@ class PlanningAgent:
             bi_encoder=self._bi_encoder,
             cross_encoder=self._cross_encoder,
         )
+        session = current_session_var.get()
+        if session is not None:
+            current_page = state["current_page"]
+            session.setdefault("links_cache", {})[current_page] = set(structure["links"])
+            session.setdefault("anchor_cache", {})[current_page] = structure["anchor_map"]
         return {
             "subheadings": structure["subheadings"],
             "links": structure["links"],
@@ -358,6 +364,8 @@ class PlanningAgent:
             "path_set": {resolved_start},
             "moves": [],
             "tried_edges": {},
+            "links_cache": {},
+            "anchor_cache": {},
             "done": False,
             "success": False,
             "failure_reason": "",

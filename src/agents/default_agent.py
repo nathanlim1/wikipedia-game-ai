@@ -4,6 +4,7 @@ import random
 import re
 from concurrent.futures import TimeoutError as FutureTimeoutError
 from typing import Any, Dict, List, Optional, Tuple
+from src.llm_timing import current_session_var
 from src.tinker_llm import TinkerLLM
 from src.wikipedia import WikipediaClient
 
@@ -51,6 +52,8 @@ class DefaultAgent:
             "moves": [],
             "stack": [],
             "tried_edges": {},
+            "links_cache": {},
+            "anchor_cache": {},
             "done": False,
             "success": False,
             "failure_reason": "",
@@ -299,6 +302,10 @@ class DefaultAgent:
         candidate_pool: int = CANDIDATE_POOL,
     ) -> Dict[str, Any]:
         outgoing, title_to_anchor = self.wiki.get_visible_outgoing_links(page_title)
+        session = current_session_var.get()
+        if session is not None:
+            session.setdefault("links_cache", {})[page_title] = set(outgoing)
+            session.setdefault("anchor_cache", {})[page_title] = title_to_anchor
         tried_from = tried_edges.setdefault(page_title, set())
         candidates = self.build_candidate_list(
             outgoing=outgoing,
