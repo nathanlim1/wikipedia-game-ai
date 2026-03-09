@@ -240,35 +240,92 @@ Best run (fewest hops) per path for humans vs system.
 | Patrick Star -> John Wall | 5 | 5 | 4.60 | 146.8 | 0.66 | 0.0% |
 | Symphony -> United States Navy | 5 | 5 | 3.20 | 61.6 | 0.71 | 40.0% |
 
-### System (all models except Qwen3-30B)
+### System: default (all models)
 
 | Path | Total | Success | Avg Hops | Avg Time (s) | Eff | % Optimal |
 |------|-------|---------|----------|--------------|-----|-----------|
-| Billy Joel -> VANOS | 11 | 11 | 9.54 | 135.8 | 0.36 | 0.0% |
-| David Gilmour -> Michael Phelps | 17 | 17 | 5.88 | 104.0 | 0.65 | 35.3% |
-| John Mulaney -> Apple | 15 | 15 | 4.33 | 129.7 | 0.70 | 0.0% |
-| McDonald's -> Yoga | 18 | 18 | 3.39 | 62.9 | 0.60 | 0.0% |
-| Minecraft -> Chess | 18 | 18 | 3.39 | 36.3 | 0.69 | 38.9% |
-| OpenAI -> Esports | 17 | 17 | 3.18 | 43.8 | 0.68 | 17.7% |
-| Patrick Star -> John Wall | 13 | 13 | 5.00 | 194.9 | 0.67 | 0.0% |
-| Symphony -> United States Navy | 16 | 16 | 2.12 | 38.7 | 0.96 | 87.5% |
+| Billy Joel -> VANOS | 9 | 9 | 9.78 | 103.3 | 0.33 | 0.0% |
+| David Gilmour -> Michael Phelps | 9 | 9 | 7.00 | 74.8 | 0.57 | 33.3% |
+| John Mulaney -> Apple | 9 | 9 | 4.00 | 54.0 | 0.75 | 0.0% |
+| McDonald's -> Yoga | 9 | 9 | 4.00 | 47.4 | 0.50 | 0.0% |
+| Minecraft -> Chess | 9 | 9 | 4.22 | 31.2 | 0.49 | 0.0% |
+| OpenAI -> Esports | 9 | 9 | 3.33 | 51.3 | 0.61 | 0.0% |
+| Patrick Star -> John Wall | 9 | 9 | 5.22 | 81.0 | 0.63 | 0.0% |
+| Symphony -> United States Navy | 9 | 9 | 2.00 | 24.4 | 1.00 | 100.0% |
 
-### Per-Path Deltas (System − Human)
+### System: planning (all models)
 
-System = all models except Qwen3-30B. Positive Δ = system higher. Negative Δ = system lower (better).
+| Path | Total | Success | Avg Hops | Avg Time (s) | Eff | % Optimal |
+|------|-------|---------|----------|--------------|-----|-----------|
+| Billy Joel -> VANOS | 4 | 3 | 8.33 | 246.6 | 0.36 | 0.0% |
+| David Gilmour -> Michael Phelps | 8 | 8 | 9.12 | 218.7 | 0.37 | 0.0% |
+| John Mulaney -> Apple | 9 | 8 | 4.38 | 251.8 | 0.69 | 0.0% |
+| McDonald's -> Yoga | 9 | 9 | 3.33 | 139.5 | 0.62 | 0.0% |
+| Minecraft -> Chess | 9 | 9 | 3.11 | 78.1 | 0.80 | 66.7% |
+| OpenAI -> Esports | 9 | 9 | 3.11 | 65.7 | 0.69 | 22.2% |
+| Patrick Star -> John Wall | 5 | 2 | 10.00 | 604.9 | 0.33 | 0.0% |
+| Symphony -> United States Navy | 9 | 9 | 2.44 | 51.5 | 0.85 | 55.6% |
+
+### System: tot (all models)
+
+| Path | Total | Success | Avg Hops | Avg Time (s) | Eff | % Optimal |
+|------|-------|---------|----------|--------------|-----|-----------|
+| Billy Joel -> VANOS | 7 | 4 | 7.25 | 62.1 | 0.46 | 0.0% |
+| David Gilmour -> Michael Phelps | 9 | 6 | 3.67 | 31.6 | 0.85 | 33.3% |
+| John Mulaney -> Apple | 6 | 4 | 4.75 | 85.9 | 0.65 | 0.0% |
+| McDonald's -> Yoga | 9 | 9 | 3.33 | 59.1 | 0.61 | 0.0% |
+| Minecraft -> Chess | 9 | 9 | 3.89 | 34.2 | 0.59 | 11.1% |
+| OpenAI -> Esports | 8 | 8 | 3.62 | 24.6 | 0.60 | 12.5% |
+| Patrick Star -> John Wall | 8 | 5 | 4.00 | 44.8 | 0.75 | 0.0% |
+| Symphony -> United States Navy | 7 | 4 | 2.25 | 21.6 | 0.92 | 42.9% |
+
+### Per-Path Deltas: default (System − Human)
+
+Positive Δ = system higher. Negative Δ = system lower (better).
 
 | Path | Δ Avg Hops | Δ Avg Time (s) | Δ Efficiency |
 |------|------------|----------------|--------------|
-| Billy Joel -> VANOS | +4.34 | +0.2 | -0.32 |
-| David Gilmour -> Michael Phelps | +0.08 | -48.8 | +0.08 |
-| John Mulaney -> Apple | -0.27 | -126.7 | +0.03 |
-| McDonald's -> Yoga | -2.21 | -214.1 | +0.17 |
-| Minecraft -> Chess | -1.41 | -87.7 | +0.24 |
-| OpenAI -> Esports | -1.22 | -77.6 | +0.17 |
-| Patrick Star -> John Wall | +0.40 | +48.1 | +0.01 |
-| Symphony -> United States Navy | -1.08 | -22.9 | +0.25 |
+| Billy Joel -> VANOS | +4.58 | -32.3 | -0.35 |
+| David Gilmour -> Michael Phelps | +1.20 | -78.0 | -0.00 |
+| John Mulaney -> Apple | -0.60 | -202.4 | +0.08 |
+| McDonald's -> Yoga | -1.60 | -229.6 | +0.06 |
+| Minecraft -> Chess | -0.58 | -92.8 | +0.03 |
+| OpenAI -> Esports | -1.07 | -70.1 | +0.11 |
+| Patrick Star -> John Wall | +0.62 | -65.8 | -0.03 |
+| Symphony -> United States Navy | -1.20 | -37.2 | +0.29 |
 
-### Per-Agent Results
+### Per-Path Deltas: planning (System − Human)
+
+Positive Δ = system higher. Negative Δ = system lower (better).
+
+| Path | Δ Avg Hops | Δ Avg Time (s) | Δ Efficiency |
+|------|------------|----------------|--------------|
+| Billy Joel -> VANOS | +3.13 | +111.0 | -0.32 |
+| David Gilmour -> Michael Phelps | +3.32 | +65.9 | -0.20 |
+| John Mulaney -> Apple | -0.22 | -4.6 | +0.02 |
+| McDonald's -> Yoga | -2.27 | -137.5 | +0.18 |
+| Minecraft -> Chess | -1.69 | -45.9 | +0.35 |
+| OpenAI -> Esports | -1.29 | -55.7 | +0.18 |
+| Patrick Star -> John Wall | +5.40 | +458.1 | -0.33 |
+| Symphony -> United States Navy | -0.76 | -10.1 | +0.14 |
+
+### Per-Path Deltas: tot (System − Human)
+
+Positive Δ = system higher. Negative Δ = system lower (better).
+
+| Path | Δ Avg Hops | Δ Avg Time (s) | Δ Efficiency |
+|------|------------|----------------|--------------|
+| Billy Joel -> VANOS | +2.05 | -73.5 | -0.22 |
+| David Gilmour -> Michael Phelps | -2.13 | -121.2 | +0.28 |
+| John Mulaney -> Apple | +0.15 | -170.5 | -0.02 |
+| McDonald's -> Yoga | -2.27 | -217.9 | +0.17 |
+| Minecraft -> Chess | -0.91 | -89.8 | +0.14 |
+| OpenAI -> Esports | -0.78 | -96.8 | +0.10 |
+| Patrick Star -> John Wall | -0.60 | -102.0 | +0.09 |
+| Symphony -> United States Navy | -0.95 | -40.0 | +0.20 |
+
+
+### Per-Agent Aggregated Results
 
 | Agent | Total | Success | Rate | Avg Hops | Avg Time (s) | Eff | % Optimal | Paths Ever Optimal |
 |-------|-------|---------|------|----------|--------------|-----|-----------|--------------------|
