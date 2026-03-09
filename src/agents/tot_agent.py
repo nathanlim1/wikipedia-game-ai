@@ -15,7 +15,7 @@ TOT_K = 5
 TOT_LLM_CANDIDATES = 50  # Links sent to LLM for scoring; top k are added as children
 TOT_EXPANSIONS_PER_STEP = 15
 TOT_SCORE_SAMPLES = 1
-LLM_TIMEOUT_S = 60
+LLM_TIMEOUT_S = 120
 
 # Set TOT_DEBUG=1 to print exploration trace
 TOT_DEBUG = os.environ.get("TOT_DEBUG", "").strip() in ("1", "true", "yes")
@@ -429,8 +429,8 @@ class ToTAgent(DefaultAgent):
             {"role": "user", "content": user_prompt},
         ]
 
-        # Rescore can have many nodes; allow longer timeout
-        text = self.llm.chat(messages, max_tokens=2048, temperature=0.2, timeout_s=180)
+        # Rescore can have many nodes; allow longer timeout. gpt-oss emits analysis before JSON.
+        text = self.llm.chat(messages, max_tokens=8192, temperature=0.2, timeout_s=180)
         data = self._parse_score_json(text)
         scores = data.get("scores", [])
         if len(scores) < len(node_list):
@@ -493,9 +493,8 @@ class ToTAgent(DefaultAgent):
         ]
 
         # Allow room for reasoning tokens + JSON (models like gpt-oss emit analysis first)
-        text = self.llm.chat(messages, max_tokens=2048, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
-        data = self._parse_pick_json(text, candidate_titles, k)
-        return data
+        text = self.llm.chat(messages, max_tokens=16384, temperature=0.2, timeout_s=180)
+        return self._parse_pick_json(text, candidate_titles, k)
 
     def llm_score_candidates(
         self,
@@ -531,7 +530,7 @@ class ToTAgent(DefaultAgent):
         all_scores: List[List[int]] = []
         for _ in range(score_samples):
             # Allow room for reasoning tokens + JSON (models like gpt-oss emit analysis first)
-            text = self.llm.chat(messages, max_tokens=1024, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
+            text = self.llm.chat(messages, max_tokens=4096, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
             data = self._parse_score_json(text)
             scores = data.get("scores", [])
             if len(scores) < len(candidate_titles):
@@ -554,14 +553,53 @@ class ToTAgent(DefaultAgent):
     ) -> List[Tuple[str, int]]:
         """Parse LLM pick response: picks with index and score. Returns [(title, score), ...]."""
         output_text = output_text.strip()
+        # Strip gpt-oss style prefixes: model emits <|channel|>analysis<|message|>... before JSON
+        final_idx = output_text.find('<|channel|>final<|message|>')
+        if final_idx >= 0:
+            output_text = output_text[final_idx + len('<|channel|>final<|message|>'):].strip()
+        else:
+            picks_idx = output_text.find('{"picks"')
+            if picks_idx > 0:
+                output_text = output_text[picks_idx:]
         output_text = re.sub(r"^```(?:json)?\s*", "", output_text)
         output_text = re.sub(r"\s*```\s*$", "", output_text)
         match = re.search(r"\{.*\}", output_text, re.DOTALL)
         if not match:
+            # Fallback: try to extract picks array from truncated output
+            picks_match = re.search(r'"picks"\s*:\s*\[(.*?)\]', output_text, re.DOTALL)
+            if picks_match:
+                # Extract {"index": N, "score": M} pairs
+                inner = picks_match.group(1)
+                idx_scores = re.findall(r'\{"index"\s*:\s*(\d+)\s*,\s*"score"\s*:\s*(\d+)', inner)
+                if idx_scores:
+                    result = []
+                    seen = set()
+                    for idx_s, score_s in idx_scores[:k]:
+                        idx = int(idx_s)
+                        if 0 <= idx < len(candidate_titles) and idx not in seen:
+                            seen.add(idx)
+                            result.append((candidate_titles[idx], min(100, max(0, int(score_s)))))
+                    if result:
+                        return result
             raise ValueError(f"No JSON found. Raw: {output_text[:200]}... (len={len(output_text)})")
         try:
             data = json.loads(match.group(0))
         except json.JSONDecodeError:
+            # Try truncated picks extraction
+            picks_match = re.search(r'"picks"\s*:\s*\[(.*)', output_text, re.DOTALL)
+            if picks_match:
+                inner = picks_match.group(1)
+                idx_scores = re.findall(r'\{"index"\s*:\s*(\d+)\s*,\s*"score"\s*:\s*(\d+)', inner)
+                if idx_scores:
+                    result = []
+                    seen = set()
+                    for idx_s, score_s in idx_scores[:k]:
+                        idx = int(idx_s)
+                        if 0 <= idx < len(candidate_titles) and idx not in seen:
+                            seen.add(idx)
+                            result.append((candidate_titles[idx], min(100, max(0, int(score_s)))))
+                    if result:
+                        return result
             raise ValueError(f"Invalid JSON. Raw: {output_text[:200]}")
         picks = data.get("picks", [])
         result = []
@@ -589,7 +627,10 @@ class ToTAgent(DefaultAgent):
     @staticmethod
     def _parse_score_json(output_text: str) -> Dict[str, Any]:
         output_text = output_text.strip()
-        # Remove markdown code blocks if present
+        # Strip gpt-oss prefix (analysis before JSON)
+        idx = output_text.find('{"scores"')
+        if idx > 0:
+            output_text = output_text[idx:]
         output_text = re.sub(r"^```(?:json)?\s*", "", output_text)
         output_text = re.sub(r"\s*```\s*$", "", output_text)
         match = re.search(r"\{.*\}", output_text, re.DOTALL)

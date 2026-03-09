@@ -198,7 +198,7 @@ class PlanningAgent:
         hypotheses: List[str] = []
         search_queries: List[str] = []
         try:
-            text = self.llm.chat(messages, max_tokens=400, temperature=0.3, timeout_s=LLM_TIMEOUT_S)
+            text = self.llm.chat(messages, max_tokens=2048, temperature=0.3, timeout_s=LLM_TIMEOUT_S)
             data = _parse_json_first(text)
             hypotheses = [str(h) for h in data.get("hypotheses", []) if h]
             search_queries = [str(q) for q in data.get("search_queries", []) if q]
@@ -320,7 +320,7 @@ class PlanningAgent:
         additional_queries: List[str] = []
 
         try:
-            text = self.llm.chat(messages, max_tokens=350, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
+            text = self.llm.chat(messages, max_tokens=2048, temperature=0.2, timeout_s=LLM_TIMEOUT_S)
             data = _parse_json_first(text)
             chosen_link = data.get("chosen_link") or None
             reasoning = str(data.get("reasoning", "")).strip()
@@ -485,6 +485,12 @@ class PlanningAgent:
 
 def _parse_json_first(text: str) -> Dict[str, Any]:
     text = text.strip()
+    # Strip gpt-oss prefix (analysis before JSON)
+    for key in ('{"hypotheses"', '{"chosen_link"', '{"search_queries"'):
+        idx = text.find(key)
+        if idx > 0:
+            text = text[idx:]
+            break
     match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
         print(f"ERROR: No JSON found. Raw: {text}")
