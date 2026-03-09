@@ -1,0 +1,61 @@
+test_id,start_page,target_page,name,time,path_length,path,Column 1,Column 2,Column 3,Column 4,Column 5,Column 6,Column 7,Column 8,Column 9,Column 10,Column 11,Column 12,Column 13,Column 14,Column 15,Column 16,Column 17,Column 18,Column 19
+1,Minecraft,Chess,Colby,1:25,4,"Minecraft, greatest video games of all time, video games, strategy, chess",,,,,,,,,,,,,,,,,,,
+2,McDonald's,Yoga,Colby,5:57,6,"McDonald's, Beyond Meat, Food energy, Calorie, Basal metabolic rate, Aerobic exercise, yoga",,,,,,,,,,,,,,,,,,,
+3,John Mulaney,Apple,Colby,3:29,4,"John Mulaney,  Chicago, US State, Washington, apple",,,,,,,,,,,,,,,,,,,
+4,Patrick Star,John Wall,Colby,1:09,5,"Patrick Star, Video Games, Sports, NBA 2K, Los Angeles Clippers, John Wall",,,,,,,,,,,,,,,,,,,
+5,OpenAI,Esports,Colby,1:39,4,"OpenAI, Microsoft, Xbox, video games, Esports",,,,,,,,,,,,,,,,,,,
+6,Symphony,United States Navy,Colby,0:18,2,"Symphony, United States Marine Band, United States Navy",,,,,,,,,,,,,,,,,,,
+7,Billy Joel,VANOS,Colby,1:18,5,"Billy Joel, Nuremburg, Germany, Bavaria, BMW, BMW 3 Series, VANOS",,,,,,,,,,,,,,,,,,,
+8,David Gilmour,Michael Phelps,Colby,2:02,5,"David Gilmour, Rock and Roll Hall of Fame, Ohio, State, Maryland, Michael Phelps",,,,,,,,,,,,,,,,,,,
+9,Minecraft,Chess,James,3:58,3,"minecraft, video game design, game design, chess",,,,,,,,,,,,,,,,,,,
+10,McDonald's,Yoga,James,8:07,4,"mcdonalds, covid-19 pandemic, healthy diet, exercise, yoga",,,,,,,,,,,,,,,,,,,
+11,John Mulaney,Apple,James,6:21,4,"john mulaney, orange county ca, orange (fruit), apple blossom, apple (fruit)",,,,,,,,,,,,,,,,,,,
+12,Patrick Star,John Wall,James,2:04,5,"patrick star, california institute of arts, los angeles, national basketball association, washington wizards, john wall",,,,,,,,,,,,,,,,,,,
+13,OpenAI,Esports,James,3:12,3,"openai, general game playing, video games, esports",,,,,,,,,,,,,,,,,,,
+14,Symphony,United States Navy,James,2:25,3,"symphony, military band, united states miltary bands, united states navy",,,,,,,,,,,,,,,,,,,
+15,Billy Joel,VANOS,James,1:04,4,"billy joel, nuremburg, germany, bmw, vanos",,,,,,,,,,,,,,,,,,,
+16,David Gilmour,Michael Phelps,James,3:12,4,"david gilmour, university of cambridge, olympic medal, 2004 summer olympics, michael phelps",,,,,,,,,,,,,,,,,,,
+17,Minecraft,Chess,Kyra,2:18,7,"minecraft, experience point, role playing game, player character, tabletop role playing game, dice, board game ,chess",,,,,,,,,,,,,,,,,,,
+18,McDonald's ,Yoga,Kyra,6:18,11,"mcdonalds, walmart, product, health literacy, basic needs, health, exercise, physical fitness, cardiorespiratory fitness, high intensity interval training, flexibility, yoga",,,,,,,,,,,,,,,,,,,
+19,John Mulaney,Apple,Kyra,6:31,5,"john mulaney, chicago, list of united states cities by population, WA, Yakima River, Apple",,,,,,,,,,,,,,,,,,,
+20,Patrick Star,John Wall,Kyra,2:59,4,"patrick star, california institute of the arts, los angeles, los angeles clippers, John Wall",,,,,,,,,,,,,,,,,,,
+21,OpenAI,Esports,Kyra,2:32,5,"OpenAI, Google, Video Game, video game genre, sports video game, esports",,,,,,,,,,,,,,,,,,,
+22,Symphony,United States Navy,Kyra,1:33,4,"Symphony, Military band, Angolan Navy, Navy, United States Navy",,,,,,,,,,,,,,,,,,,
+23,Billy Joel ,VANOS,Kyra,4:18,4,"billy joel, Nuremberg, germany, BMW, VANOS",,,,,,,,,,,,,,,,,,,
+24,David Gilmour,Michael Phelps,Kyra,2:48,8,"David gilmour, environmentalism, water pollution, body of water, swimming pool, swimming, swimming at the summer olympics, list of olympic records in swimming, Michael phelps",,,,,,,,,,,,,,,,,,,
+25,Minecraft,Chess,Nathan,1:42,5,"Minecraft, Multiplayer video games, Video game, Gameplay, Tabletop game, Chess",,,,,,,,,,,,,,,,,,,
+26,McDonald's ,Yoga,Nathan,0:55,3,"McDonald's, Obesity, Exercise, Yoga",,,,,,,,,,,,,,,,,,,
+27,John Mulaney,Apple,Nathan,3:31,6,"John Mulaney, Sobriety, Health effects of alcohol, Ultra-processed food, Food processing, Vitamin C, Apple",,,,,,,,,,,,,,,,,,,
+28,Patrick Star,John Wall,Nathan,3:26,5,"Patrick Star, Trading card, Basketball, National Basketball Assocation, Los Angeles Clippers, John Wall",,,,,,,,,,,,,,,,,,,
+29,OpenAI,Esports,Nathan,2:07,7,"OpenAI, Nvidia, Graphics processing unit, Star Fox (1993 video game), List of video games listed among the best, Counter-Strike (video game), Counter-Strike in esports, Esports",,,,,,,,,,,,,,,,,,,
+30,Symphony,United States Navy,Nathan,0:27,2,"Symphony, United States Marine Band, United States Navy",,,,,,,,,,,,,,,,,,,
+31,Billy Joel ,VANOS,Nathan,0:41,3,"Billy Joel, Rolls-Royce Limited, BMW, VANOS",,,,,,,,,,,,,,,,,,,
+32,David Gilmour,Michael Phelps,Nathan,1:08,4,"David Gilmour, University of Cambridge, Olympic medal, List of Olympic medalists in swimming, Michael Phelps",,,,,,,,,,,,,,,,,,,
+33,Minecraft,Chess,Caleb,0:57,5,"Minecraft, D.I.C.E. Award for Strategy/Simulation Game of the Year, Strategic Studies Group, Wargame, Rules of chess, Chess
+
+",,,,,,,,,,,,,,,,,,,
+34,McDonald's,Yoga,Caleb,1:48,4,"McDonalds, Obesity, Exercise, Yoga as exercise, Yoga",,,,,,,,,,,,,,,,,,,
+35,John Mulaney,Apple,Caleb,1:30,4,"John Mulaney, Apple TV (streaming service), Apple Inc., Apple (disambiguation), Apple",,,,,,,,,,,,,,,,,,,
+36,Patrick Star,John Wall,Caleb,2:36,4,"Patric Star, National Football League, National Basketball Association, Washington Wizards, John Wall
+
+",,,,,,,,,,,,,,,,,,,
+37,OpenAI,Esports,Caleb,0:37,3,"OpenAI, General game playing, Video game, Esports
+",,,,,,,,,,,,,,,,,,,
+38,Symphony,United States Navy,Caleb,0:25,5,"Symphony, Greek language, Hellenic Army, Hellenic Navy, United States, United States Navy
+
+
+
+",,,,,,,,,,,,,,,,,,,
+39,Billy Joel,VANOS,Caleb,3:57,10,"Billy Joel, Airplane!, Chevy Chase, Palm Springs Walk of the Stars, California State Route 111, Arterial road, Road collision types, Multiple-vehicle collision, Gasoline, BMW, VANOS
+
+
+
+
+",,,,,,,,,,,,,,,,,,,
+40,David Gilmour,Michael Phelps,Caleb,3:34,8,"David Gilmour, Pink Floyd,  Olympic Stadium (Montreal), Montreal Olympic pool, d'Coque, 1976 Summer Olympics, John Naber, Swimming at the 1976 Summer Olympics – Men's 200 metre freestyle, Michael Phelps
+
+
+
+
+
+",,,,,,,,,,,,,,,,,,,
