@@ -42,3 +42,8 @@ Opens at `http://127.0.0.1:8000` by default.
 - `evaluation/run_llm_sweep.py` — sweep over LLM choice counts for the default agent
 - `evaluation/results/` — EVALUATION_REPORT.md, HUMAN_COMPARISON.md, aggregated statistics, compiled runs
 - `evaluation/human_results/` — human baseline data
+
+## Project Deliverables
+
+- **[Final Paper.pdf](Final%20Paper.pdf)** — full project write-up
+- **[Poster.pdf](Poster.pdf)** — conference-style poster
