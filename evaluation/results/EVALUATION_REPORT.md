@@ -4,7 +4,7 @@
 
 - **Total runs:** 197
 - **Successful:** 178 (90.4%)
-- **Excluded:** 22 failed runs (Failed gpt-oss and Llama-70b runs excluded (system issues))
+- **Excluded:** 22 failed runs (Failed gpt-oss and Llama-70b runs excluded (code issues related to timeouts that were later fixed))
 - **Data sources:** failed_configs_retry_20260309_091309.json, eval_results_20260309_012502.json, eval_harness_2runs_20260308_234433.json
 
 **Efficiency (Eff)** = optimal_length / hops (1.0 = perfect path; lower = more detours). **Time** = wall-clock seconds per run.
