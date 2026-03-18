@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 from typing import List, Tuple
 
 import numpy as np
@@ -145,7 +146,10 @@ def load_models(
     For higher accuracy at the cost of ~66 MB, use ``ms-marco-MiniLM-L-12-v2``.
     """
     bi_encoder = TextEmbedding(bi_model_name)
-    cross_encoder = Ranker(model_name=ce_model_name)
+    # Use persistent cache dir instead of /tmp (avoids NO_SUCHFILE when /tmp is cleared)
+    cache_dir = Path.home() / ".cache" / "flashrank"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cross_encoder = Ranker(model_name=ce_model_name, cache_dir=str(cache_dir))
     return bi_encoder, cross_encoder
 
 
